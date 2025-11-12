@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>MyGouvernement.be</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>💶 Répartis le budget 100%</h1>
+    <div class="jeu-recap">
+        <div class="jeu">
+            <p>Total actuel : <span id="total">0</span>%</p>
+            <div id="jauge" class="jauge">
+                <div id="progress" class="progress"></div>
+            </div>
+            <img id="personnage" src="{{ url_for('static', filename='neutral.gif') }}" width="150">
+
+            <div id="bulle" class="bulle">
+                <p id="texte_situation">Clique sur "Next" pour commencer.</p>
+            </div>
+            <div id="options" class="options"></div>
+            <button id="nextBtn">Next</button>
+        </div>
+
+        <div class="recap">
+            <h3>Récapitulatif du budget</h3>
+            <ul id="recapList"></ul>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
