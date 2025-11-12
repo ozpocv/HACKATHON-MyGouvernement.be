@@ -1,164 +1,170 @@
 let total = 0;
-let etape = 0;
-let secteurChoisi = "";
-const budgetTotal = 317000000000;
-let repartition = {
-    "Protection sociale": 0,
-    "Santé": 0,
-    "Éducation": 0,
-    "Environnement": 0,
-    "Infrastructure": 0
+const BUDGET_TOTAL = 159000000000;
+let repartition = { "Protection sociale":0, "Santé":0, "Éducation":0, "Environnement":0, "Infrastructure":0 };
+
+const elements = {
+    accueil: document.getElementById('ecran-accueil'),
+    jeu: document.getElementById('jeu'),
+    bulle: document.getElementById('bulle'),
+    options: document.getElementById('options'),
+    total: document.getElementById('total'),
+    progress: document.getElementById('progress'),
+    personnage: document.getElementById('personnage'),
+    nextBtn: document.getElementById('nextBtn'),
+    restartBtn: document.getElementById('btn-recommencer'),
+    commencerBtn: document.getElementById('btn-commencer'),
+    recapList: document.getElementById('recapList'),
+    infoBox: document.getElementById('info-culture'),
+    warningReste: document.getElementById('warning-reste'),
+    restePct: document.getElementById('reste-pct')
 };
 
-const bulle = document.getElementById('bulle');
-const optionsDiv = document.getElementById('options');
-const totalSpan = document.getElementById('total');
-const personnage = document.getElementById('personnage');
-const nextBtn = document.getElementById('nextBtn');
-const progress = document.getElementById('progress');
-const recapList = document.getElementById('recapList');
-
-// Questions avec secteurs associés
-const questions = [
-    { texte: "La santé et l'éducation nécessitent plus de financement. Où veux-tu investir ?", secteurs: ["Santé", "Éducation"] },
-    { texte: "Protéger l'environnement ou développer les infrastructures ?", secteurs: ["Environnement", "Infrastructure"] },
-    { texte: "Renforcer la protection sociale ou améliorer la santé ?", secteurs: ["Protection sociale", "Santé"] },
-    { texte: "Éducation ou santé : que privilégies-tu ?", secteurs: ["Éducation", "Santé"] },
-    { texte: "Investir dans l'environnement ou les infrastructures ?", secteurs: ["Environnement", "Infrastructure"] }
-];
-
-let currentQuestion = 0;
-
-// Met à jour le récapitulatif du budget
 function majRecap() {
-    recapList.innerHTML = "";
+    elements.recapList.innerHTML = "";
     for (let sec in repartition) {
-        let pourc = repartition[sec];
-        let montant = Math.round((pourc / 100) * budgetTotal).toLocaleString('fr-FR');
-        let li = document.createElement("li");
-        li.innerHTML = `<strong>${sec} :</strong> ${pourc}% → ${montant} €`;
-        recapList.appendChild(li);
+        const montant = Math.round(repartition[sec] / 100 * BUDGET_TOTAL).toLocaleString('fr-BE');
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${sec}:</strong> ${repartition[sec]}% → ${montant} €`;
+        elements.recapList.appendChild(li);
     }
 }
 
-// Reset complet du jeu
-function resetJeu() {
-    total = 0;
-    etape = 0;
-    secteurChoisi = "";
-    repartition = {
-        "Protection sociale": 0,
-        "Santé": 0,
-        "Éducation": 0,
-        "Environnement": 0,
-        "Infrastructure": 0
-    };
-    totalSpan.innerText = total;
-    progress.style.width = total + "%";
-    personnage.src = `/static/neutral.gif`;
-    bulle.innerHTML = `<p>Clique sur "Next" pour commencer.</p>`;
-    optionsDiv.innerHTML = "";
+function showInfo(text) {
+    elements.infoBox.textContent = text;
+    elements.infoBox.style.animation = 'fadeIn 1s';
+}
+
+function updateProgress() {
+    elements.total.innerText = total;
+    elements.progress.style.width = total + "%";
+}
+
+function setMode(mode) {
+    fetch("/api/mode", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode }) })
+    .then(r => r.json())
+    .then(data => {
+        showInfo(data.info);
+        document.querySelectorAll('.mode-btn').forEach(b => b.style.opacity = 0.6);
+        document.querySelector(`[onclick="setMode('${mode}')"]`).style.opacity = 1;
+        elements.commencerBtn.style.display = "block";
+    });
+}
+
+elements.commencerBtn.addEventListener('click', () => {
+    elements.accueil.style.display = "none";
+    elements.jeu.style.display = "block";
+    elements.nextBtn.style.display = "block";
+    elements.bulle.innerHTML = "Appuie sur <strong>Suivant</strong> pour commencer !";
     majRecap();
-    nextBtn.style.display = "inline-block";
-    currentQuestion = 0;
-}
+    updateProgress();
+});
 
-window.onload = () => {
-    resetJeu();
-};
+elements.nextBtn.addEventListener('click', () => {
+    fetch("/api/next", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ total, repartition }) })
+    .then(r => r.json())
+    .then(data => {
+        showInfo(data.info);
 
-// Gestion du clic sur Next
-nextBtn.addEventListener('click', () => {
-    if (etape !== 0) return;
-
-    // Fin du jeu si toutes les questions ont été posées
-    if (currentQuestion >= questions.length) {
-        if (total < 100) {
-            // Popup pour le budget restant
-            showPopupBudget("Attention ! Il reste du budget non utilisé. Où souhaitez-vous le mettre ?", ["Poche du citoyen", "Poche du ministre"]);
-        } else {
-            bulle.innerHTML = `<p>Fin du jeu !</p><p>Merci d'avoir réparti le budget.</p>`;
-            optionsDiv.innerHTML = "";
-            nextBtn.style.display = "none";
+        if (data.evenement_popup) {
+            alert(data.texte);
+            elements.bulle.innerHTML = `<p class="event-warning"><strong>${data.texte}</strong></p><p>Clique sur Suivant pour appliquer.</p>`;
+            elements.nextBtn.style.display = "block";
+            return;
         }
-        return;
-    }
 
-    const question = questions[currentQuestion];
-    currentQuestion++;
+        if (data.evenement_applique) {
+            total = data.total;
+            repartition = data.repartition;
+            updateProgress();
+            majRecap();
+            elements.bulle.innerHTML = `<p class="event-applied"><strong>${data.texte}</strong></p><p>Appuie sur Suivant.</p>`;
+            elements.nextBtn.style.display = "block";
+            return;
+        }
 
-    optionsDiv.innerHTML = "";
-    bulle.innerHTML = `<p>${question.texte}</p><p>Choisis un secteur :</p>`;
+        // FIN DU JEU
+        if (data.fin) {
+            total = data.total;
+            repartition = data.repartition;
+            updateProgress();
+            majRecap();
+            elements.personnage.src = "/static/" + data.gif;
+            elements.bulle.innerHTML = `<p><strong>Fin du jeu !</strong></p><p>${data.message}</p>`;
+            elements.nextBtn.style.display = "none";
+            elements.restartBtn.style.display = "block";
+            if (data.choix_reste) {
+                elements.restePct.innerText = data.reste;
+                elements.warningReste.style.display = "block";
+            } else {
+                elements.restartBtn.style.display = "block";  // FORCER SI PAS CHOIX RESTE
+            }
+            return;
+        }
 
-    question.secteurs.forEach(sec => {
-        let btn = document.createElement("button");
-        btn.innerText = sec;
+        // QUESTION NORMALE
+        elements.options.innerHTML = "";
+        elements.bulle.innerHTML = `<p><strong>Question :</strong> ${data.texte}</p><p>Choisis un secteur :</p>`;
 
-        btn.addEventListener('click', () => {
-            secteurChoisi = sec;
-            etape = 1;
-
-            fetch("/api/options_pourcentage", {
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({secteur: sec, total})
-            })
-            .then(r => r.json())
-            .then(res => {
-                optionsDiv.innerHTML = "";
-                bulle.innerHTML = `<p>Choisis le pourcentage pour ${res.secteur} :</p>`;
-                res.options.forEach(pourc => {
-                    let btnP = document.createElement("button");
-                    btnP.innerText = `${pourc}%`;
-
-                    btnP.addEventListener('click', () => {
-                        fetch("/api/choix", {
-                            method: "POST",
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({total, secteur: secteurChoisi, pourcentage: pourc})
-                        })
-                        .then(r => r.json())
-                        .then(res2 => {
-                            total = res2.total;
-                            totalSpan.innerText = total;
-                            progress.style.width = total + "%";
-                            personnage.src = `/static/${res2.gif}`;
-                            bulle.innerHTML = `<p>${secteurChoisi} : ${pourc}%</p><p>${res2.message}</p>`;
-                            optionsDiv.innerHTML = "";
-                            etape = 0;
-
-                            repartition[secteurChoisi] = pourc;
-                            majRecap();
-                        });
-                    });
-
-                    optionsDiv.appendChild(btnP);
-                });
-            });
+        data.secteurs.forEach(sec => {
+            const btn = document.createElement("button");
+            btn.innerText = sec;
+            btn.onclick = () => choisirSecteur(sec);
+            elements.options.appendChild(btn);
         });
-
-        optionsDiv.appendChild(btn);
     });
 });
 
-// Fonction pour afficher popup budget non utilisé
-function showPopupBudget(message, options) {
-    let popup = document.createElement("div");
-    popup.className = "popup";
-    popup.innerHTML = `<p>${message}</p>`;
-    options.forEach(opt => {
-        let btn = document.createElement("button");
-        btn.innerText = opt;
-        btn.addEventListener('click', () => {
-            repartition[opt] = 100 - total; 
-            total = 100;
-            totalSpan.innerText = total;
-            progress.style.width = total + "%";
-            majRecap();
-            popup.remove();
-            bulle.innerHTML = `<p>Budget final réparti.</p>`;
+function choisirSecteur(secteur) {
+    fetch("/api/options", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secteur }) })
+    .then(r => r.json())
+    .then(res => {
+        elements.options.innerHTML = "";
+        elements.bulle.innerHTML = `<p>Tu as choisi : <strong>${secteur}</strong></p><p>Combien veux-tu allouer ? (reste: ${res.reste}%)</p>`;
+        res.options.forEach(p => {
+            const btn = document.createElement("button");
+            btn.innerText = p + "%";
+            btn.onclick = () => validerChoix(secteur, p);
+            elements.options.appendChild(btn);
         });
-        popup.appendChild(btn);
     });
-    document.body.appendChild(popup);
 }
+
+function validerChoix(secteur, pourcentage) {
+    fetch("/api/choix", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secteur, pourcentage, total, repartition }) })
+    .then(r => r.json())
+    .then(res => {
+        total = res.total;
+        repartition = res.repartition;
+        updateProgress();
+        majRecap();
+        elements.personnage.src = "/static/" + res.gif;
+        elements.bulle.innerHTML = `<p>${res.message}</p>`;
+        showInfo(res.info);
+        elements.options.innerHTML = "";
+        elements.nextBtn.style.display = total < 100 ? "block" : "none";
+
+        // SI TOTAL >= 100 APRÈS CHOIX, FORCER RECOMMENCER
+        if (total >= 100) {
+            elements.restartBtn.style.display = "block";
+        }
+    });
+}
+
+function choisirReste(peuple) {
+    fetch("/api/choix_reste", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ peuple }) })
+    .then(r => r.json())
+    .then(res => {
+        total = 100;
+        repartition = res.repartition;
+        updateProgress();
+        majRecap();
+        elements.personnage.src = "/static/" + res.gif;
+        elements.bulle.innerHTML = `<p><strong>${res.message}</strong></p>`;
+        elements.warningReste.style.display = "none";
+        elements.restartBtn.style.display = "block";
+    });
+}
+
+elements.restartBtn.addEventListener('click', () => {
+    location.reload();
+});

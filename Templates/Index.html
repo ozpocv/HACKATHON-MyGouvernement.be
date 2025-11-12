@@ -2,34 +2,55 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>MyGouvernement.be</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Budget Belgique 2024</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="container">
-    <h1>💶 Répartis le budget 100%</h1>
-    <div class="jeu-recap">
-        <div class="jeu">
-            <p>Total actuel : <span id="total">0</span>%</p>
-            <div id="jauge" class="jauge">
+    <div class="container">
+        <h1>Budget Belgique 2024 <span class="small">(159 milliards €)</span></h1>
+
+        <!-- ÉCRAN D'ACCUEIL -->
+        <div id="ecran-accueil" class="center-screen">
+            <h2>MyGouvernement.be</h2>
+            <p>Choisis ton style de gouvernance :</p>
+            <div class="mode-selection">
+                <button onclick="setMode('Écolo')" class="mode-btn ecolo">Écolo</button>
+                <button onclick="setMode('Social')" class="mode-btn social">Social</button>
+                <button onclick="setMode('Équilibré')" class="mode-btn" id="default-mode">Équilibré</button>
+            </div>
+            <button id="btn-commencer" class="start-btn" style="display:none;">Commencer le jeu</button>
+        </div>
+
+        <!-- JEU -->
+        <div id="jeu" style="display:none;">
+            <div id="info-culture" class="info-box"></div>
+            <div id="bulle" class="bulle">Prêt à commencer ?</div>
+            <div id="options" class="options"></div>
+
+            <div id="warning-reste" class="warning-box" style="display:none;">
+                <p><strong>Il reste <span id="reste-pct"></span>% du budget !</strong></p>
+                <p>Que fais-tu de cet argent ?</p>
+                <button onclick="choisirReste(true)" class="btn-peuple">Redistribué au peuple</button>
+                <button onclick="choisirReste(false)" class="btn-ministre">Dans la poche des ministres</button>
+            </div>
+
+            <div class="progress-container">
                 <div id="progress" class="progress"></div>
             </div>
-            <img id="personnage" src="{{ url_for('static', filename='neutral.gif') }}" width="150">
+            <p class="total">Total : <span id="total">0</span>%</p>
 
-            <div id="bulle" class="bulle">
-                <p id="texte_situation">Clique sur "Next" pour commencer.</p>
-            </div>
-            <div id="options" class="options"></div>
-            <button id="nextBtn">Next</button>
-        </div>
+            <img id="personnage" src="/static/neutral.gif" alt="Personnage" width="120">
 
-        <div class="recap">
-            <h3>Récapitulatif du budget</h3>
-            <ul id="recapList"></ul>
+            <h3>Récapitulatif</h3>
+            <ul id="recapList" class="recap"></ul>
+
+            <button id="nextBtn" class="next-btn" style="display:none;">Suivant</button>
+            
+            <!-- BOUTON RECOMMENCER -->
+            <button id="btn-recommencer" class="restart-btn" style="display:none;">Recommencer</button>
         </div>
     </div>
-</div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="/static/script.js"></script>
 </body>
 </html>

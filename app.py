@@ -1,103 +1,275 @@
+# app.py
 from flask import Flask, render_template, request, jsonify
 import random
 
 app = Flask(__name__)
 
-secteurs = ["Protection sociale", "Santé", "Éducation", "Environnement", "Infrastructure"]
-valeurs_possibles = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
-choix_secteurs_utilises = []
-questions = [
+# === CONFIG BELGIQUE ===
+BUDGET_TOTAL = 159_000_000_000
+SECTEURS = ["Protection sociale", "Santé", "Éducation", "Environnement", "Infrastructure"]
+VALEURS_POSSIBLES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+
+MODES = {
+    "Écolo": {"bonus": "Environnement", "malus": "Infrastructure"},
+    "Social": {"bonus": "Protection sociale", "malus": "Éducation"},
+    "Équilibré": {}
+}
+
+# 20 QUESTIONS UNIQUES
+QUESTIONS = [
     {"texte": "La santé et l'éducation nécessitent plus de financement. Où veux-tu investir ?", "secteurs": ["Santé", "Éducation"]},
-    {"texte": "Protéger l'environnement est crucial cette année. Où veux-tu investir ?", "secteurs": ["Environnement", "Infrastructure"]},
-    {"texte": "La sécurité sociale doit être renforcée. Que choisis-tu ?", "secteurs": ["Protection sociale", "Santé"]},
-    {"texte": "Améliorer les écoles ou les hôpitaux ?", "secteurs": ["Éducation", "Santé"]},
+    {"texte": "Protéger l'environnement ou développer les infrastructures ?", "secteurs": ["Environnement", "Infrastructure"]},
+    {"texte": "Renforcer la protection sociale ou améliorer la santé ?", "secteurs": ["Protection sociale", "Santé"]},
+    {"texte": "Éducation ou santé : que privilégies-tu ?", "secteurs": ["Éducation", "Santé"]},
+    {"texte": "Investir dans l'environnement ou les infrastructures ?", "secteurs": ["Environnement", "Infrastructure"]},
+    {"texte": "Protection sociale ou éducation : quelle priorité ?", "secteurs": ["Protection sociale", "Éducation"]},
+    {"texte": "Santé ou environnement : où allouer plus ?", "secteurs": ["Santé", "Environnement"]},
+    {"texte": "Éducation ou environnement : que choisir ?", "secteurs": ["Éducation", "Environnement"]},
+    {"texte": "Infrastructure ou protection sociale : quelle option ?", "secteurs": ["Infrastructure", "Protection sociale"]},
+    {"texte": "Santé ou infrastructure : priorité à quoi ?", "secteurs": ["Santé", "Infrastructure"]},
+    {"texte": "Environnement ou santé : investissement clé ?", "secteurs": ["Environnement", "Santé"]},
+    {"texte": "Protection sociale ou infrastructure : que privilégier ?", "secteurs": ["Protection sociale", "Infrastructure"]},
+    {"texte": "Éducation ou protection sociale : où investir ?", "secteurs": ["Éducation", "Protection sociale"]},
+    {"texte": "Infrastructure ou éducation : quel choix ?", "secteurs": ["Infrastructure", "Éducation"]},
+    {"texte": "Santé ou protection sociale : priorité ?", "secteurs": ["Santé", "Protection sociale"]},
+    {"texte": "Environnement ou éducation : que choisir ?", "secteurs": ["Environnement", "Éducation"]},
+    {"texte": "Infrastructure ou santé : investissement ?", "secteurs": ["Infrastructure", "Santé"]},
+    {"texte": "Protection sociale ou environnement : option ?", "secteurs": ["Protection sociale", "Environnement"]},
+    {"texte": "Éducation ou santé : nouveau choix ?", "secteurs": ["Éducation", "Santé"]},
+    {"texte": "Infrastructure ou environnement : décision ?", "secteurs": ["Infrastructure", "Environnement"]}
 ]
-current_question_index = 0
+
+EVENEMENTS = [
+    {"texte": "Crise COVID ! +10 % santé obligatoire.", "secteur": "Santé", "impact": 10},
+    {"texte": "Inondations en Wallonie ! +10 % infrastructure.", "secteur": "Infrastructure", "impact": 10},
+    {"texte": "Grève sociale ! +10 % protection sociale.", "secteur": "Protection sociale", "impact": 10},
+    {"texte": "Réforme scolaire réussie ! –5 % éducation.", "secteur": "Éducation", "impact": -5},
+    {"texte": "Accord climat UE ! –5 % environnement.", "secteur": "Environnement", "impact": -5},
+]
+
+INFOS_BELGIQUE = [
+    "Le budget fédéral belge 2024 est d'environ 159 milliards €.",
+    "La sécurité sociale représente ~30 % du budget belge.",
+    "La Belgique dépense 6,1 % de son PIB en éducation.",
+    "Le Plan National Climat vise la neutralité carbone en 2050.",
+    "Les infrastructures routières belges sont parmi les plus denses d'Europe.",
+    "Le système de santé belge est financé à 77 % par la sécurité sociale.",
+]
+
+MESSAGES_FIN = {
+    "Écolo": "Félicitations ! Ton gouvernement vert a sauvé la planète !",
+    "Social": "Bravo ! Tu as protégé les plus vulnérables. Solidarité !",
+    "Équilibré": "Équilibre parfait. Tu es un maître du compromis !"
+}
+
+# === ÉTAT GLOBAL ===
+repartition = {s: 0 for s in SECTEURS}
+question_index = 0
+mode_jeu = "Équilibré"
+evenement_declenche = False
+evenement_en_attente = None
 
 
-# Fonction pour générer options valides pour un secteur
-def options_valides(total, max_total=100):
-    reste = max_total - total
-    possibles = [v for v in valeurs_possibles if v <= reste]
-    if len(choix_secteurs_utilises) >= 4 or reste in possibles:
+def reset_jeu():
+    global repartition, question_index, mode_jeu, evenement_declenche, evenement_en_attente
+    repartition = {s: 0 for s in SECTEURS}
+    question_index = 0
+    mode_jeu = "Équilibré"
+    evenement_declenche = False
+    evenement_en_attente = None
+
+
+def total_alloue():
+    return sum(repartition.values())
+
+
+def reste_budget():
+    return 100 - total_alloue()
+
+
+def options_valides(reste):
+    if reste <= 0: return []
+    possibles = [v for v in VALEURS_POSSIBLES if v <= reste]
+    if reste in possibles:
         return [reste]
-    nb_options = min(3, len(possibles))
-    return random.sample(possibles, nb_options)
+    return random.sample(possibles, min(3, len(possibles))) if possibles else []
 
-# Fonction pour déterminer le GIF et message selon le secteur et le pourcentage
-def etat_personnage(total, secteur=None, pourcentage=None):
-    if secteur == "Santé" and pourcentage is not None:
-        if pourcentage < 15:
-            return "sick.gif", "Ton personnage tombe malade !"
-        elif pourcentage < 25:
-            return "neutral.gif", "Ton personnage se sent un peu faible."
-        else:
-            return "happy.gif", "Ton personnage est en pleine forme !"
-
-    if secteur == "Éducation" and pourcentage is not None:
-        if pourcentage < 15:
-            return "sad.gif", "Ton personnage a du mal à apprendre."
-        elif pourcentage < 25:
-            return "neutral.gif", "Ton personnage progresse doucement."
-        else:
-            return "happy.gif", "Ton personnage est très instruit !"
-
-    # Total général
-    if total < 40:
-        return "sad.gif", "Ton personnage est inquiet !"
-    elif total < 80:
-        return "neutral.gif", "Ton personnage attend de voir..."
-    else:
-        return "happy.gif", "Ton personnage est content !"
 
 @app.route('/')
 def index():
-    global choix_secteurs_utilises
-    choix_secteurs_utilises = []  # reset serveur à chaque refresh
-    return render_template("index.html")
+    reset_jeu()
+    return render_template("index.html", budget=BUDGET_TOTAL)
 
-current_question_index = 0  # variable globale pour suivre la question
+
+@app.route('/api/mode', methods=['POST'])
+def api_mode():
+    global mode_jeu
+    data = request.json
+    mode_jeu = data.get("mode", "Équilibré")
+    return jsonify({"mode": mode_jeu, "info": random.choice(INFOS_BELGIQUE)})
+
 
 @app.route('/api/next', methods=['POST'])
 def api_next():
-    global current_question_index
+    global question_index, evenement_declenche, evenement_en_attente
+
     data = request.json
-    total = data.get("total", 0)
+    client_repartition = data.get("repartition", {})
+    repartition.update(client_repartition)
 
-    # Fin du jeu si total = 100 ou toutes les questions utilisées
-    if total >= 100 or current_question_index >= len(questions):
-        gif, message = etat_personnage(total)
-        return jsonify({"fin": True, "total": total, "gif": gif, "message": message})
+    info = random.choice(INFOS_BELGIQUE)
 
-    # Proposer la question et ses secteurs associés
-    question = questions[current_question_index]
-    current_question_index += 1  # passer à la question suivante
+    # 1. ÉVÉNEMENT EN ATTENTE
+    if evenement_en_attente:
+        evt = evenement_en_attente
+        secteur = evt["secteur"]
+        impact = evt["impact"]
+        actuel = repartition[secteur]
+        nouveau = max(0, actuel + impact)
+        total_avant = total_alloue()
+        if total_avant - actuel + nouveau > 100:
+            nouveau = 100 - (total_avant - actuel)
+        repartition[secteur] = nouveau
+        evenement_en_attente = None
+        return jsonify({
+            "evenement_applique": True,
+            "texte": f"{evt['texte']} → {secteur} : {nouveau}%",
+            "total": total_alloue(),
+            "repartition": repartition,
+            "info": info
+        })
+
+    # 2. DÉCLENCHER UN SEUL ÉVÉNEMENT
+    if not evenement_declenche and random.random() < 0.3:
+        evt = random.choice(EVENEMENTS)
+        evenement_en_attente = evt
+        evenement_declenche = True
+        return jsonify({
+            "evenement_popup": True,
+            "texte": evt["texte"],
+            "info": info
+        })
+
+    # 3. FIN
+    if total_alloue() >= 100 or question_index >= len(QUESTIONS):
+        reste = reste_budget()
+        if reste > 0:
+            return jsonify({
+                "fin": True,
+                "total": total_alloue(),
+                "reste": reste,
+                "gif": "neutral.gif",
+                "message": f"Budget presque complet ! Il reste {reste}% à répartir.",
+                "repartition": repartition,
+                "info": info,
+                "choix_reste": True
+            })
+        message = MESSAGES_FIN.get(mode_jeu, "Bien joué !")
+        return jsonify({
+            "fin": True,
+            "total": 100,
+            "reste": 0,
+            "gif": "happy.gif",
+            "message": message,
+            "repartition": repartition,
+            "info": info,
+            "choix_reste": False
+        })
+
+    # 4. QUESTION NORMALE
+    q = QUESTIONS[question_index]
+    question_index += 1
     return jsonify({
         "fin": False,
-        "texte": question["texte"],
-        "secteurs": question["secteurs"]
+        "texte": q["texte"],
+        "secteurs": q["secteurs"],
+        "info": info,
+        "total": total_alloue()
     })
 
 
-@app.route('/api/options_pourcentage', methods=['POST'])
-def api_options_pourcentage():
+@app.route('/api/options', methods=['POST'])
+def api_options():
     data = request.json
-    secteur = data.get("secteur")
-    total = data.get("total", 0)
-    options = options_valides(total)
-    return jsonify({"secteur": secteur, "options": options})
+    secteur = data["secteur"]
+    reste = reste_budget()
+    options = options_valides(reste)
+    return jsonify({"secteur": secteur, "options": options, "reste": reste})
+
 
 @app.route('/api/choix', methods=['POST'])
 def api_choix():
     data = request.json
-    total = data.get("total", 0)
-    secteur = data.get("secteur")
-    pourcentage = data.get("pourcentage", 0)
+    secteur = data["secteur"]
+    pct = data["pourcentage"]
+    repartition.update(data.get("repartition", {}))
 
-    total += pourcentage
-    choix_secteurs_utilises.append(secteur)
-    gif, message = etat_personnage(total, secteur, pourcentage)
-    return jsonify({"total": total, "gif": gif, "message": message})
+    total_avant = total_alloue()
+    if total_avant >= 100:
+        return jsonify({
+            "total": 100,
+            "gif": "neutral.gif",
+            "message": "Budget complet !",
+            "secteur": secteur,
+            "pourcentage": 0,
+            "repartition": repartition,
+            "info": "Plus de budget disponible."
+        })
+
+    if total_avant + pct > 100:
+        pct = 100 - total_avant
+
+    if pct <= 0:
+        return jsonify({
+            "total": total_avant,
+            "gif": "neutral.gif",
+            "message": "Pas assez de budget !",
+            "secteur": secteur,
+            "pourcentage": 0,
+            "repartition": repartition,
+            "info": "Budget épuisé."
+        })
+
+    repartition[secteur] += pct
+    total = total_alloue()
+
+    return jsonify({
+        "total": total,
+        "gif": "happy.gif" if total >= 100 else "neutral.gif",
+        "message": f"{secteur} : +{pct}%",
+        "secteur": secteur,
+        "pourcentage": pct,
+        "repartition": repartition,
+        "info": random.choice(INFOS_BELGIQUE)
+    })
+
+
+@app.route('/api/choix_reste', methods=['POST'])
+def api_choix_reste():
+    data = request.json
+    choix = data.get("peuple", False)
+    reste = reste_budget()
+    if choix:
+        secteurs_restants = [s for s, v in repartition.items() if v == 0]
+        if not secteurs_restants:
+            secteurs_restants = SECTEURS
+        part = reste // len(secteurs_restants)
+        for s in secteurs_restants:
+            repartition[s] += part
+        reste_restant = reste - (part * len(secteurs_restants))
+        if reste_restant > 0 and secteurs_restants:
+            repartition[secteurs_restants[0]] += reste_restant
+        message = f"Les {reste}% ont été redistribués au peuple !"
+    else:
+        message = f"Les {reste}% sont allés dans la poche des ministres..."
+    return jsonify({
+        "total": 100,
+        "gif": "happy.gif",
+        "message": message,
+        "repartition": repartition,
+        "peuple": choix
+    })
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

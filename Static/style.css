@@ -1,66 +1,125 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-    font-family: Arial, sans-serif;
-    background: #f0f2f5;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #fff9c4, #e8f5e9);
+    color: #333;
     padding: 20px;
 }
+.container { max-width: 800px; margin: 0 auto; background: white; border-radius: 16px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+h1 { text-align: center; color: #d32f2f; margin-bottom: 10px; }
+.small { font-size: 0.7em; color: #666; }
 
-.container h1 {
-    text-align: center;
+/* ÉCRAN D'ACCUEIL */
+.center-screen {
+    text-align: center; padding: 40px 20px;
 }
-
-.jeu-recap {
-    display: flex;
-    gap: 20px;
+.center-screen h2 { color: #1565c0; margin-bottom: 20px; }
+.mode-selection { margin: 30px 0; }
+.mode-btn {
+    padding: 12px 24px; margin: 8px; font-size: 18px;
+    border: none; border-radius: 12px; cursor: pointer;
+    transition: all 0.3s; font-weight: bold;
 }
+.mode-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+.ecolo { background: #2e7d32; color: white; }
+.social { background: #c2185b; color: white; }
+#default-mode { background: #1565c0; color: white; }
 
-.jeu {
-    flex: 2;
+.start-btn {
+    margin-top: 30px; padding: 14px 40px; font-size: 20px;
+    background: #43a047; color: white; border: none;
+    border-radius: 12px; cursor: pointer; font-weight: bold;
+    transition: 0.3s;
 }
+.start-btn:hover { background: #388e3c; transform: scale(1.05); }
 
-.recap {
-    flex: 1;
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+/* JEU */
+.info-box {
+    background: #e8f5e9; border-left: 4px solid #2e7d32;
+    padding: 12px; margin: 15px 0; font-style: italic;
+    border-radius: 0 8px 8px 0; animation: fadeIn 1s;
 }
+.bulle { background: #f5f5f5; padding: 16px; border-radius: 12px; margin: 20px 0; min-height: 60px; text-align: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+.options { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0; }
+.options button { padding: 12px 20px; font-size: 16px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.options button:hover { background: #e8f5e9; border-color: #2e7d32; transform: scale(1.05); }
 
-.recap ul {
-    list-style: none;
-    padding: 0;
+.progress-container { height: 24px; background: #eee; border-radius: 12px; overflow: hidden; margin: 15px 0; }
+.progress { height: 100%; width: 0; background: linear-gradient(90deg, #43a047, #66bb6a); transition: width 0.6s ease; }
+
+.total { font-weight: bold; text-align: center; font-size: 1.2em; color: #d32f2f; }
+#personnage { display: block; margin: 20px auto; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+.recap { list-style: none; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+.recap li { padding: 8px 0; border-bottom: 1px solid #eee; }
+.recap li:last-child { border: none; }
+.recap strong { color: #d32f2f; }
+
+.next-btn {
+    display: block; margin: 20px auto; padding: 12px 30px; font-size: 18px;
+    background: #d32f2f; color: white; border: none; border-radius: 12px;
+    cursor: pointer; transition: 0.3s; font-weight: bold;
 }
+.next-btn:hover { background: #b71c1c; transform: scale(1.05); }
 
-.recap li {
-    margin-bottom: 8px;
-}
-
-.jauge {
-    width: 100%;
-    height: 25px;
-    background: #e0e0e0;
-    border-radius: 12px;
-    margin: 15px 0;
-    overflow: hidden;
-}
-
-.progress {
-    width: 0%;
-    height: 100%;
-    background: #28a745;
-    border-radius: 12px;
-    transition: width 0.5s ease-in-out;
-}
-
-.options button {
-    margin: 5px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: #007bff;
+.restart-btn {
+    background: #d32f2f;
     color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+    margin: 25px auto;
+    display: block;
 }
 
-.options button:hover {
-    background: #0056b3;
+.restart-btn:hover {
+    background: #b71c1c;
+    transform: scale(1.05);
+}
+
+
+/* Warning */
+.warning-box {
+    background: #ffebee; border: 2px solid #f44336; border-radius: 12px;
+    padding: 16px; margin: 20px 0; text-align: center; animation: pulse 1.5s infinite;
+}
+.warning-box p { margin: 8px 0; font-weight: bold; color: #c62828; }
+.btn-peuple, .btn-ministre {
+    margin: 5px; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
+}
+.btn-peuple { background: #4caf50; color: white; }
+.btn-ministre { background: #d32f2f; color: white; }
+.btn-peuple:hover { background: #388e3c; }
+.btn-ministre:hover { background: #b71c1c; }
+
+
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+}
+
+.options button:disabled {
+    background: #f0f0f0 !important;
+    border: 2px solid #ccc !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+.event-applied {
+    background: #4caf50; color: white; padding: 10px; border-radius: 8px; font-weight: bold; margin: 10px 0;
+}
+
+.event-warning {
+    background: #ff9800; color: white; padding: 10px; border-radius: 8px; font-weight: bold; margin: 10px 0;
+}
+.event-applied {
+    background: #4caf50; color: white; padding: 10px; border-radius: 8px; font-weight: bold; margin: 10px 0;
 }
