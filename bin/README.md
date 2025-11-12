@@ -1,2 +1,0 @@
-# HACKATHON-My-Gouvernement
-
