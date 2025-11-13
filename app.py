@@ -73,12 +73,6 @@ INFOS_BELGIQUE = [
     "Le système de santé belge est financé à 77 % par la sécurité sociale.",
 ]
 
-MESSAGES_FIN = {
-    "Défense": "Félicitations ! Ton gouvernement a rendu ton pays plus sûr !",
-    "Social": "Bravo ! Tu as protégé les plus vulnérables. Solidarité !",
-    "Équilibré": "Équilibre parfait. Tu es un maître du compromis !"
-}
-
 # === ÉTAT GLOBAL ===
 repartition = {s: 0 for s in SECTEURS}
 question_index = 0
@@ -111,6 +105,30 @@ def options_valides(reste):
     if reste in possibles:
         return [reste]
     return random.sample(possibles, min(3, len(possibles))) if possibles else []
+
+
+# === ANALYSE D'ÉQUILIBRE (STRICTE ET FIABLE) ===
+def analyser_equilibre():
+    valeurs = list(repartition.values())
+    negatifs = sum(1 for v in valeurs if v < 0)
+    zeros = sum(1 for v in valeurs if v == 0)
+    positifs = [v for v in valeurs if v > 0]
+
+    # 1. Déficit : au moins 1 secteur négatif
+    if negatifs >= 1:
+        return "déficit"
+
+    # 2. Déséquilibré : 2 secteurs ou plus à 0%
+    if zeros >= 2:
+        return "déséquilibré"
+
+    # 3. Équilibré : tous les secteurs >= 10% et écart max 15%
+    if len(positifs) == 5 and all(v >= 10 for v in positifs):
+        if max(positifs) - min(positifs) <= 15:
+            return "équilibré"
+
+    # 4. Sinon : normal (mais pas "Bien joué !")
+    return "normal"
 
 
 # === ROUTES ===
@@ -154,8 +172,7 @@ def api_next():
         impact = evt["impact"]
         actuel = repartition[secteur]
 
-        # AUTORISE LES NÉGATIFS
-        nouveau = actuel + impact
+        nouveau = actuel + impact  # Autorise négatif
         repartition[secteur] = nouveau
         evenement_en_attente = None
 
@@ -184,29 +201,33 @@ def api_next():
         })
 
     # === FIN DU JEU ===
-    if total_alloue() >= 100 or question_index >= len(QUESTIONS):
+    total_actuel = total_alloue()
+    if total_actuel >= 100 or question_index >= len(QUESTIONS):
         reste = reste_budget()
-        if reste > 0:
-            return jsonify({
-                "fin": True,
-                "total": total_alloue(),
-                "reste": reste,
-                "gif": "neutral.png",
-                "message": f"Budget presque complet ! Il reste {reste}% à répartir.",
-                "repartition": repartition,
-                "info": info,
-                "choix_reste": True
-            })
-        message = MESSAGES_FIN.get(mode_jeu, "Bien joué !")
+        equilibre = analyser_equilibre()
+
+        if equilibre == "équilibré":
+            message = "Équilibre parfait. Tu es un maître du compromis !"
+            gif = "happy.png"
+        elif equilibre == "déficit":
+            message = "Le pays est en déficit ! Il faut rééquilibrer."
+            gif = "neutral.png"
+        elif equilibre == "déséquilibré":
+            message = "Attention ! Trop de secteurs sous-financés ou en déficit."
+            gif = "neutral.png"
+        else:
+            message = "Budget complet, mais déséquilibré."
+            gif = "neutral.png"
+
         return jsonify({
             "fin": True,
-            "total": 100,
-            "reste": 0,
-            "gif": "happy.png",
+            "total": total_actuel,
+            "reste": max(0, reste),
+            "gif": gif,
             "message": message,
             "repartition": repartition,
             "info": info,
-            "choix_reste": False
+            "choix_reste": reste > 0
         })
 
     # === QUESTION SUIVANTE ===
@@ -217,7 +238,7 @@ def api_next():
         "texte": q["texte"],
         "secteurs": q["secteurs"],
         "info": info,
-        "total": total_alloue()
+        "total": total_actuel
     })
 
 
