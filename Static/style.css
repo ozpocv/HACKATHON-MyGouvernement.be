@@ -155,3 +155,53 @@ h1 { text-align: center; color: #d32f2f; margin-bottom: 10px; }
     font-weight: bold;
     color: #333;
 }
+
+/* === MISE EN PAGE À DEUX COLONNES === */
+.game-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.character-box {
+  background: #f0f7f4;
+  padding: 15px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+  margin-top: 60px;
+}
+
+.character-img {
+  width: 120px;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .game-container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    margin-top: 20px;
+  }
+  .character-box {
+    margin-top: 0;
+  }
+}

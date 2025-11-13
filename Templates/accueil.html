@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget 159 Milliards - Accueil</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container center-screen">
+    <h1>Budget de la Belgique</h1>
+    <h2 class="small">159 000 000 000 € à répartir</h2>
+
+    <div class="mode-selection">
+      <button class="mode-btn ecolo" onclick="setMode('Écolo')">Écolo</button>
+      <button class="mode-btn social" onclick="setMode('Social')">Social</button>
+      <button class="mode-btn" id="default-mode" onclick="setMode('Équilibré')">Équilibré</button>
+    </div>
+
+    <button class="start-btn" id="btn-commencer" style="display: none;">
+      Commencer le jeu
+    </button>
+
+    <div class="info-box" id="info-culture" style="margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    function setMode(mode) {
+      fetch("/api/mode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode })
+      })
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById("info-culture").textContent = data.info;
+        document.querySelectorAll('.mode-btn').forEach(b => b.style.opacity = 0.6);
+        document.querySelector(`[onclick="setMode('${mode}')"]`).style.opacity = 1;
+        document.getElementById("btn-commencer").style.display = "block";
+      });
+    }
+
+    document.getElementById("btn-commencer").addEventListener("click", () => {
+      window.location.href = "/jeu";
+    });
+
+    window.onload = () => setMode("Équilibré");
+  </script>
+</body>
+</html>

@@ -1,13 +1,32 @@
 # app.py
 from flask import Flask, render_template, request, jsonify
 import random
+import locale
 
 app = Flask(__name__)
+
+# === CONFIG LOCALE ===
+try:
+    locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
+except locale.Error:
+    try:
+        locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
+    except locale.Error:
+        locale.setlocale(locale.LC_ALL, '')
+
+# === FILTRE JINJA2 : format_number ===
+def format_number(value):
+    try:
+        return locale.format_string("%d", int(value), grouping=True)
+    except:
+        return str(value)
+
+app.jinja_env.filters['format_number'] = format_number
 
 # === CONFIG BELGIQUE ===
 BUDGET_TOTAL = 159_000_000_000
 SECTEURS = ["Protection sociale", "Santé", "Éducation", "Défense", "Infrastructure"]
-VALEURS_POSSIBLES = [5, 10, 15, 20, 25, 30 ]
+VALEURS_POSSIBLES = [5, 10, 15, 20, 25, 30]
 
 MODES = {
     "Écolo": {"bonus": "Défense", "malus": "Infrastructure"},
@@ -15,7 +34,6 @@ MODES = {
     "Équilibré": {}
 }
 
-# 20 QUESTIONS UNIQUES
 QUESTIONS = [
     {"texte": "Le Premier ministre veut attribuer un montant dans la santé, mais il hésite aussi à les implémentés dans les prestations social.", "secteurs": ["Santé", "Protection sociale"]},
     {"texte": "Génial, le gouvernement veut investir dans l'éducation ! Qu'est-ce qu'il ne ferait pas pour nos chers écoliers. Mais aussi madame la femme du Premier ministre s'inquiète pour sa maison de vacances sur la cote belge. Doit-on mettre le budget dans la défense ?", "secteurs": ["Éducation", "Infrastructure"]},
@@ -26,7 +44,6 @@ QUESTIONS = [
     {"texte": "Sortez vos vélos ! C'est bientôt la journée sans voiture, mais les pistes cyclables ne sont pas encore prêtes, doivent, on implémenter plus de fond dans les infrastructures afin d'entre sûr qu'elles soit prête pour cette journée ou renforcé la défense en prévision du conflit annuel des fans de rolleur contre leurs ennemies jurées les fans de patins à roulettes.", "secteurs": ["Infrastructure", "Défense"]},
     {"texte": "'Les nouvelles du jour : une météorite a touché la maison de notre cher Premier ministre, il en est sur c'est un coup des Martiens !' Devons-nous renforcer nos mesures de sécurité en créant une force de police dans l'espace ou plutôt nous attacher à réparer les effets de la météorite lors de son passage ?", "secteurs": ["Défense", "Infrastructure"]},
     {"texte": "C'est le black friday ! Les nouveau char dernière cris son en solde sur le site de la défense une affaire à saisir pour le gouvernement, mais il hésite, les professeurs ce plaignent des conditions de travail.", "secteurs": ["Défense", "Éducation"]},
-   
     {"texte": "Santé ou infrastructure : priorité à quoi ?", "secteurs": ["Santé", "Infrastructure"]},
     {"texte": "Défense ou santé : investissement clé ?", "secteurs": ["Défense", "Santé"]},
     {"texte": "Protection sociale ou infrastructure : que privilégier ?", "secteurs": ["Protection sociale", "Infrastructure"]},
@@ -58,7 +75,7 @@ INFOS_BELGIQUE = [
 ]
 
 MESSAGES_FIN = {
-    "Défense": "Félicitations ! Ton gouvernement à rendu ton pays plus sûr !",
+    "Défense": "Félicitations ! Ton gouvernement a rendu ton pays plus sûr !",
     "Social": "Bravo ! Tu as protégé les plus vulnérables. Solidarité !",
     "Équilibré": "Équilibre parfait. Tu es un maître du compromis !"
 }
@@ -89,15 +106,22 @@ def reste_budget():
 
 
 def options_valides(reste):
-    if reste <= 0: return []
+    if reste <= 0:
+        return []
     possibles = [v for v in VALEURS_POSSIBLES if v <= reste]
     if reste in possibles:
         return [reste]
     return random.sample(possibles, min(3, len(possibles))) if possibles else []
 
 
+# === ROUTES ===
 @app.route('/')
-def index():
+def accueil():
+    return render_template("accueil.html")
+
+
+@app.route('/jeu')
+def jeu():
     reset_jeu()
     return render_template("index.html", budget=BUDGET_TOTAL)
 
@@ -106,21 +130,21 @@ def index():
 def api_mode():
     global mode_jeu
     data = request.json
-    mode_jeu = data.get("mode", "Équilibre")
+    mode = data.get("mode", "Équilibré")
+    if mode not in MODES:
+        mode = "Équilibré"
+    mode_jeu = mode
     return jsonify({"mode": mode_jeu, "info": random.choice(INFOS_BELGIQUE)})
 
 
 @app.route('/api/next', methods=['POST'])
 def api_next():
     global question_index, evenement_declenche, evenement_en_attente
-
     data = request.json
     client_repartition = data.get("repartition", {})
     repartition.update(client_repartition)
-
     info = random.choice(INFOS_BELGIQUE)
 
-    # 1. ÉVÉNEMENT EN ATTENTE
     if evenement_en_attente:
         evt = evenement_en_attente
         secteur = evt["secteur"]
@@ -140,7 +164,6 @@ def api_next():
             "info": info
         })
 
-    # 2. DÉCLENCHER UN SEUL ÉVÉNEMENT
     if not evenement_declenche and random.random() < 0.3:
         evt = random.choice(EVENEMENTS)
         evenement_en_attente = evt
@@ -151,7 +174,6 @@ def api_next():
             "info": info
         })
 
-    # 3. FIN
     if total_alloue() >= 100 or question_index >= len(QUESTIONS):
         reste = reste_budget()
         if reste > 0:
@@ -177,7 +199,6 @@ def api_next():
             "choix_reste": False
         })
 
-    # 4. QUESTION NORMALE
     q = QUESTIONS[question_index]
     question_index += 1
     return jsonify({
@@ -232,11 +253,10 @@ def api_choix():
         })
 
     repartition[secteur] += pct
-    total = total_alloue()
 
     return jsonify({
-        "total": total,
-        "gif": "happy.gif" if total >= 100 else "neutral.gif",
+        "total": total_alloue(),
+        "gif": "happy.gif" if total_alloue() >= 100 else "neutral.gif",
         "message": f"{secteur} : +{pct}%",
         "secteur": secteur,
         "pourcentage": pct,
@@ -252,6 +272,8 @@ def api_choix_reste():
     reste = reste_budget()
     if choix:
         secteurs_restants = [s for s, v in repartition.items() if v == 0]
+        if not secteurs_restants:
+            secteurs_restants = [s for s in SECTEURS if repartition[s] < 20]
         if not secteurs_restants:
             secteurs_restants = SECTEURS
         part = reste // len(secteurs_restants)
