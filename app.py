@@ -147,25 +147,32 @@ def api_next():
     repartition.update(client_repartition)
     info = random.choice(INFOS_BELGIQUE)
 
+    # === APPLICATION D'UN ÉVÉNEMENT EN ATTENTE ===
     if evenement_en_attente:
         evt = evenement_en_attente
         secteur = evt["secteur"]
         impact = evt["impact"]
         actuel = repartition[secteur]
-        nouveau = max(0, actuel + impact)
-        total_avant = total_alloue()
-        if total_avant - actuel + nouveau > 100:
-            nouveau = 100 - (total_avant - actuel)
+
+        # AUTORISE LES NÉGATIFS
+        nouveau = actuel + impact
         repartition[secteur] = nouveau
         evenement_en_attente = None
+
+        if impact < 0:
+            message = f"{evt['texte']} → {secteur} : {nouveau}% (malus de {impact}%)"
+        else:
+            message = f"{evt['texte']} → {secteur} : +{impact}%"
+
         return jsonify({
             "evenement_applique": True,
-            "texte": f"{evt['texte']} → {secteur} : {nouveau}%",
+            "texte": message,
             "total": total_alloue(),
             "repartition": repartition,
             "info": info
         })
 
+    # === DÉCLENCHER UN NOUVEL ÉVÉNEMENT ===
     if not evenement_declenche and random.random() < 0.3:
         evt = random.choice(EVENEMENTS)
         evenement_en_attente = evt
@@ -176,6 +183,7 @@ def api_next():
             "info": info
         })
 
+    # === FIN DU JEU ===
     if total_alloue() >= 100 or question_index >= len(QUESTIONS):
         reste = reste_budget()
         if reste > 0:
@@ -201,6 +209,7 @@ def api_next():
             "choix_reste": False
         })
 
+    # === QUESTION SUIVANTE ===
     q = QUESTIONS[question_index]
     question_index += 1
     return jsonify({

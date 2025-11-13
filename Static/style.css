@@ -14,7 +14,7 @@ body {
 }
 
 /* ======================================== */
-/* === 1. ACCUEIL.HTML – ÉCRAN CENTRÉ === */
+/* === 1. ACCUEIL.HTML – FOND BLANC === */
 /* ======================================== */
 .accueil-container {
     display: flex;
@@ -22,28 +22,28 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-    background: #fff; 
+    background: #fff;
 }
 
 .accueil-content {
     text-align: center;
     max-width: 600px;
     padding: 40px;
-    background: rgba(0, 0, 0, 0.7);
+    background: #ffffff;
     border-radius: 20px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    color: #1a1a1a;
 }
 
 .accueil-content h1 {
     font-size: 2.5em;
-    color: #43a047;
+    color: #d32f2f;
     margin-bottom: 10px;
 }
 
 .small {
     font-size: 1.1em;
-    color: #aaa;
+    color: #555;
     margin-bottom: 30px;
 }
 
@@ -86,10 +86,9 @@ body {
     z-index: -1;
     filter: brightness(0.92);
 }
-
 .start-character-center {
     position: fixed;
-    top: 50%;
+    top: 58%;                    /* Personnage plus bas */
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
@@ -98,167 +97,222 @@ body {
     text-align: center;
     z-index: 10;
     max-width: 90%;
+    gap: 0;                      /* Aucune marge entre bulle et GIF */
 }
 
 .speech-bubble {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.96);
     color: #1a1a1a;
-    padding: 18px 28px;
-    border-radius: 24px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    padding: 26px 42px;
+    border-radius: 36px;
+    box-shadow: 0 14px 38px rgba(0,0,0,0.42);
     font-style: italic;
-    font-size: 1.2em;
-    font-weight: 500;
-    max-width: 340px;
-    margin-bottom: 20px;
+    font-size: 1.45em;
+    font-weight: 600;
+    max-width: 440px;
     position: relative;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.4);
+    z-index: 12;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.5);
+    margin: 0 auto;
 }
 
 .speech-bubble::after {
     content: '';
     position: absolute;
-    bottom: -14px;
+    bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 18px solid transparent;
-    border-right: 18px solid transparent;
-    border-top: 18px solid rgba(255, 255, 255, 0.95);
+    border-left: 24px solid transparent;
+    border-right: 24px solid transparent;
+    border-top: 24px solid rgba(255, 255, 255, 0.96);
+    z-index: 12;
 }
 
 .start-character-img {
-    width: auto;
-    max-width: 480px;
-    max-height: 65vh;
+    width: 700px;
+    max-width: 700px;
+    max-height: 100vh;
     object-fit: contain;
-    filter: drop-shadow(0 16px 32px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 24px 48px rgba(0,0,0,0.65));
+    z-index: 11;
+    margin-top: -150px;           /* COMPENSE bulle + flèche → BULLE COLLÉE */
+    position: relative;
 }
 
+/* === PANNEAUX LATÉRAUX – MARGES 20px === */
 .start-sectors-panel,
 .start-info-panel {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    width: 300px;
+    width: 420px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 22px;
     z-index: 15;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .start-sectors-panel {
     left: 30px;
+    align-items: center;
 }
 
 .start-info-panel {
     right: 30px;
-    align-items: flex-end;
-}
-
-.sector-btn {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #43a047;
-    color: #1a1a1a;
-    padding: 12px 18px;
-    border-radius: 30px;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 13px;
-    cursor: default;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+    align-items: center;
     text-align: center;
 }
 
-.sector-btn:hover {
-    background: #43a047;
-    color: white;
-    transform: translateY(-2px);
+/* === PYRAMIDE CORRIGÉE – TAILLE CROISSANTE + ALIGNEMENT PARFAIT === */
+.start-sectors-panel .sector-btn {
+    background: rgba(255, 255, 255, 0.95);
+    border: 3.5px solid #43a047;
+    color: #1a1a1a;
+    border-radius: 40px;
+    text-transform: uppercase;
+    cursor: default;
+    box-shadow: 0 7px 18px rgba(0,0,0,0.22);
+    transition: all 0.3s ease;
+    text-align: center;
+    font-weight: 800;
+    white-space: nowrap;
+    display: inline-block;
 }
 
+/* TAILLE + MARGE PROGRESSIVE – PYRAMIDE VISUELLE PARFAITE */
+.start-sectors-panel .sector-btn:nth-child(1) { 
+    font-size: 12px; 
+    padding: 10px 16px; 
+    min-width: 140px; 
+    margin-left: 85px; 
+}
+.start-sectors-panel .sector-btn:nth-child(2) { 
+    font-size: 13px; 
+    padding: 11px 18px; 
+    min-width: 155px; 
+    margin-left: 60px; 
+}
+.start-sectors-panel .sector-btn:nth-child(3) { 
+    font-size: 14.5px; 
+    padding: 13px 22px; 
+    min-width: 185px; 
+    margin-left: 0; 
+    font-weight: 900; /* Gras contrôlé */
+}
+.start-sectors-panel .sector-btn:nth-child(4) { 
+    font-size: 13px; 
+    padding: 11px 18px; 
+    min-width: 155px; 
+    margin-left: 60px; 
+}
+.start-sectors-panel .sector-btn:nth-child(5) { 
+    font-size: 12px; 
+    padding: 10px 16px; 
+    min-width: 140px; 
+    margin-left: 85px; 
+}
+
+.start-sectors-panel .sector-btn:hover {
+    background: #43a047;
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 14px 32px rgba(67, 160, 71, 0.5);
+}
+
+/* === FICHE + BOUTON CENTRÉS + MARGE 40px === */
 .info-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98);
     color: #1a1a1a;
-    padding: 24px;
-    border-radius: 18px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    font-size: 15px;
-    line-height: 1.7;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.5);
-    max-width: 260px;
+    padding: 36px;
+    border-radius: 28px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    font-size: 18px;
+    line-height: 2;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.7);
+    max-width: 340px;
+    width: 100%;
+    text-align: left;
 }
 
 .start-btn {
-    margin-top: 20px;
+    margin-top: 40px; /* MARGE ENTRE FICHE ET BOUTON */
     background: #d32f2f;
     color: white;
     border: none;
-    padding: 16px 36px;
+    padding: 24px 54px;
     border-radius: 50px;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 22px;
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.8px;
     transition: all 0.3s ease;
-    box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4);
+    box-shadow: 0 14px 32px rgba(211, 47, 47, 0.6);
+    width: 100%;
+    max-width: 340px;
 }
 
 .start-btn:hover {
     background: #b71c1c;
-    transform: scale(1.08);
+    transform: scale(1.14);
+    box-shadow: 0 18px 40px rgba(183, 28, 28, 0.7);
 }
 
 /* ======================================== */
-/* === 3. JEU.HTML – INCHANGÉ (déjà OK) === */
+/* === 3. JEU.HTML – INCHANGÉ === */
 /* ======================================== */
-/* (Tous les styles du jeu sont conservés ci-dessous) */
-
+/* ======================================== */
 .reaction-center {
     position: fixed;
-    top: 50%; left: 50%;
+    top: 58%;                    /* Abaissé de ~8cm (au lieu de 50%) */
+    left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
     z-index: 10;
     pointer-events: none;
+    gap: 8px;                    /* Rapproche le label de l'image */
 }
 
 #reaction-img {
-    width: auto;
-    max-width: 480px;
-    height: auto;
-    max-height: 70vh;
+    width: 450px;
+    max-width: 450px;
+    max-height: 90vh;
     object-fit: contain;
     opacity: 0;
     transition: opacity 1.2s ease;
     filter: drop-shadow(0 12px 30px rgba(0,0,0,0.5));
+    margin-bottom: 4px;          /* Petit espace sous l'image */
 }
 
-#reaction-img.loaded { opacity: 1; }
+#reaction-img.loaded { 
+    opacity: 1; 
+}
 
 #reaction-label {
-    margin-top: 18px;
+    margin-top: 0;               /* Supprime le margin-top ancien */
     font-size: 1.5em;
     font-weight: bold;
     color: #fff;
     text-shadow: 0 2px 6px rgba(0,0,0,0.7);
     background: rgba(0,0,0,0.5);
-    padding: 10px 24px;
+    padding: 8px 20px;           /* Un peu plus compact */
     border-radius: 50px;
     backdrop-filter: blur(6px);
-    min-height: 50px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: auto;
+    font-size: 1.4em;            /* Légèrement réduit pour coller mieux */
 }
 
 .questionnaire {
@@ -284,7 +338,6 @@ body {
     margin-bottom: 8px;
 }
 
-/* === FORMULAIRE === */
 .progress-container { height: 28px; background: #e0e0e0; border-radius: 14px; overflow: hidden; }
 .progress { height: 100%; width: 0; background: linear-gradient(90deg, #43a047, #66bb6a); transition: width 0.7s ease; }
 .total { font-weight: bold; text-align: center; font-size: 1.3em; color: #d32f2f; }
@@ -308,23 +361,38 @@ body {
 /* ======================================== */
 /* === RESPONSIVE === */
 /* ======================================== */
-@media (max-width: 1200px) {
-    .start-sectors-panel, .start-info-panel { width: 240px; }
-    .start-character-img { max-width: 400px; }
+@media (max-width: 1400px) {
+    .start-sectors-panel, .start-info-panel { width: 380px; }
+    .start-character-img { max-width: 520px; }
 }
 
-@media (max-width: 900px) {
-    .start-sectors-panel { left: 15px; width: 200px; }
-    .start-info-panel { right: 15px; width: 200px; }
-    .start-character-img { max-width: 320px; max-height: 55vh; }
-    .speech-bubble { font-size: 1.1em; max-width: 280px; }
+@media (max-width: 1100px) {
+    .start-sectors-panel, .start-info-panel { width: 320px; left: 20px !important; right: 20px !important; }
+    .start-character-img { max-width: 440px; max-height: 65vh; }
+    .speech-bubble { font-size: 1.3em; max-width: 360px; }
 }
 
 @media (max-width: 700px) {
     .accueil-content { padding: 30px; }
     .mode-btn { padding: 12px 20px; font-size: 16px; }
-    .start-sectors-panel, .start-info-panel { position: relative; width: 100%; left: auto !important; right: auto !important; transform: none; padding: 0 20px; }
+    .start-sectors-panel, .start-info-panel { 
+        position: relative; 
+        width: 100%; 
+        left: auto !important; 
+        right: auto !important; 
+        transform: none; 
+        padding: 0 20px; 
+        margin: 0;
+    }
     .start-sectors-panel { order: 1; margin-bottom: 20px; }
     .start-info-panel { order: 3; margin-top: 20px; align-items: center; }
     .start-character-center { position: relative; top: auto; left: auto; transform: none; order: 2; margin: 20px 0; }
+    .start-sectors-panel .sector-btn:nth-child(n) { 
+        margin-left: 0 !important; 
+        font-size: 14px !important; 
+        padding: 12px 20px !important; 
+        min-width: 180px !important;
+    }
+    .info-card, .start-btn { max-width: 100%; }
+    .start-btn { margin-top: 30px; }
 }

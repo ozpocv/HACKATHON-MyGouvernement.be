@@ -28,7 +28,7 @@ let repartition = {
 // === MAPPING DES IMAGES ===
 const GIF_MAP = {
     "Protection sociale": { low: "low_social.png", normal: "neutral.png", progress: "content.png", high: "content.png" },
-    "Santé": { low: "low_sante.png", normal: "neutral.png", progress: "content.png", high: "medecin.png" },
+    "Santé": { low: "low_sante.png", normal: "neutral.png", progress: "medecin.png", high: "medecin.png" },
     "Éducation": { low: "low_education.png", normal: "neutral.png", progress: "content.png", high: "content.png" },
     "Défense": { low: "low_defense.png", normal: "neutral.png", progress: "content.png", high: "content.png" },
     "Infrastructure": { low: "low_infra.png", normal: "neutral.png", progress: "content.png", high: "infraHappy.png" }
@@ -38,19 +38,35 @@ const GIF_MAP = {
 function updateProgress() {
     total = Object.values(repartition).reduce((a, b) => a + b, 0);
     el.total.textContent = total;
-    el.progress.style.width = Math.min(total, 100) + '%';
+    el.progress.style.width = Math.min(Math.max(total, 0), 100) + '%';
+
+    const reste = 100 - Math.max(total, 0);
+    document.querySelector('.total').innerHTML = 
+        `Budget alloué : <span id="total">${total}</span>% 
+         <span style="color:#666; font-size:0.9em;">(reste : ${reste > 0 ? reste : 0}%)</span>`;
 }
 
 function majRecap() {
     el.recapList.innerHTML = '';
-    for (let [secteur, pct] of Object.entries(repartition)) {
+    const BUDGET_TOTAL_EUROS = 159000000000;
+    const ordre = ["Protection sociale", "Santé", "Éducation", "Défense", "Infrastructure"];
+
+    ordre.forEach(secteur => {
+        let pct = repartition[secteur] || 0;
+        const montant = Math.round(pct / 100 * BUDGET_TOTAL_EUROS);
+        const li = document.createElement('li');
+
         if (pct > 0) {
-            const montant = Math.round(pct / 100 * 159000000000).toLocaleString('fr-BE');
-            const li = document.createElement('li');
-            li.innerHTML = `<strong>${secteur}:</strong> ${pct}% → ${montant} €`;
-            el.recapList.appendChild(li);
+            li.innerHTML = `<strong>${secteur}:</strong> <span style="color:green;">+${pct}%</span> → ${montant.toLocaleString('fr-BE')} €`;
+        } else if (pct < 0) {
+            li.innerHTML = `<strong>${secteur}:</strong> <span style="color:#c00; font-weight:bold;">${pct}%</span> → ${montant.toLocaleString('fr-BE')} € <span style="font-size:0.8em;">(déficit)</span>`;
+        } else {
+            li.innerHTML = `<strong>${secteur}:</strong> 0% → 0 €`;
+            li.style.opacity = '0.6';
         }
-    }
+
+        el.recapList.appendChild(li);
+    });
 }
 
 function showInfo(text) {
@@ -80,7 +96,7 @@ function updateCentralReaction(secteur, pct) {
     newImg.onload = () => {
         img.src = newImg.src;
         img.classList.remove('loaded');
-        void img.offsetWidth; // Force reflow
+        void img.offsetWidth;
         img.classList.add('loaded');
     };
     newImg.onerror = () => {
@@ -90,7 +106,7 @@ function updateCentralReaction(secteur, pct) {
     newImg.src = `/static/${gif}?v=${Date.now()}`;
 
     label.innerHTML = text;
-    el.reactionCenter.style.display = 'flex'; // Toujours visible
+    el.reactionCenter.style.display = 'flex';
 }
 
 // === CHARGER QUESTION ===
@@ -188,7 +204,6 @@ function validerChoix(secteur, pct) {
         updateProgress();
         majRecap();
 
-        // METTRE À JOUR LE PERSONNAGE (PERSISTANT)
         updateCentralReaction(secteur, pct);
 
         let msg = data.message;
@@ -198,7 +213,7 @@ function validerChoix(secteur, pct) {
         el.bulle.innerHTML = `<p>${msg}</p>`;
         showInfo(data.info);
         el.options.innerHTML = '';
-        setTimeout(chargerQuestion, 2500); // Temps pour voir la réaction
+        setTimeout(chargerQuestion, 2500);
     });
 }
 
@@ -225,17 +240,16 @@ function choisirReste(peuple) {
 el.nextBtn.onclick = chargerQuestion;
 el.restartBtn.onclick = () => location.reload();
 
-// === DÉMARRAGE – NEUTRAL AFFICHÉ IMMÉDIATEMENT ===
+// === DÉMARRAGE ===
 window.addEventListener('load', () => {
     updateProgress();
     majRecap();
     el.nextBtn.style.display = 'block';
 
-    // NEUTRAL DÈS LE DÉBUT
     el.reactionImg.src = '/static/neutral.png';
     el.reactionImg.classList.add('loaded');
     el.reactionLabel.textContent = 'Prêt à gérer le budget !';
-    el.reactionCenter.style.display = 'flex'; // Toujours visible
+    el.reactionCenter.style.display = 'flex';
 
     console.log("Jeu chargé. Personnage neutre affiché.");
 });
