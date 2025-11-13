@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start Budgeting</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="start-container">
+    <!-- Liste des secteurs à gauche -->
+    <div class="sectors-panel">
+      <button class="sector-btn">SANTÉ</button>
+      <button class="sector-btn">ÉDUCATION</button>
+      <button class="sector-btn">PROTECTION SOCIALE</button>
+      <button class="sector-btn">SECTEUR DE LA DÉFENSE</button>
+      <button class="sector-btn">DÉVELOPPEMENT ÉCONOMIQUE ET MOBILITÉ</button>
+    </div>
+
+    <!-- Personnage au centre avec bulle de dialogue -->
+    <div class="character-panel">
+      <img id="personnage" src="/static/personnage.gif" alt="Personnage" class="character-img">
+      <div class="speech-bubble">
+        Hi! Can you help me make choices for a better future.
+      </div>
+    </div>
+
+    <!-- Panneau d'infos à droite avec bouton -->
+    <div class="info-panel">
+      <div class="info-card">
+        <p><strong>NOM :</strong> Marc Dupont.</p>
+        <p><strong>ÂGE :</strong> 35 ans.</p>
+        <p><strong>JOB :</strong> sans emploi.</p>
+        <p><strong>BUDGET :</strong> 100%.</p>
+      </div>
+      <button class="start-btn" onclick="window.location.href='/jeu'">START BUDGETING</button>
+    </div>
+  </div>
+</body>
+</html>

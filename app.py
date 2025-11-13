@@ -119,6 +119,9 @@ def options_valides(reste):
 def accueil():
     return render_template("accueil.html")
 
+@app.route('/startbudgeting')
+def startbudgeting():
+    return render_template("startbudgeting.html")
 
 @app.route('/jeu')
 def jeu():
