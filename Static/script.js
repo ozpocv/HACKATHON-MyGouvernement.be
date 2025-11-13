@@ -80,7 +80,8 @@ function updateCentralReaction(secteur, pct) {
     newImg.onload = () => {
         img.src = newImg.src;
         img.classList.remove('loaded');
-        setTimeout(() => img.classList.add('loaded'), 50);
+        void img.offsetWidth; // Force reflow
+        img.classList.add('loaded');
     };
     newImg.onerror = () => {
         img.src = '/static/neutral.png';
@@ -89,12 +90,11 @@ function updateCentralReaction(secteur, pct) {
     newImg.src = `/static/${gif}?v=${Date.now()}`;
 
     label.innerHTML = text;
-    el.reactionCenter.style.display = 'flex';
+    el.reactionCenter.style.display = 'flex'; // Toujours visible
 }
 
 // === CHARGER QUESTION ===
 function chargerQuestion() {
-    // NE PAS CACHER LA RÉACTION ICI → elle reste jusqu’au prochain choix
     fetch('/api/next', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -188,7 +188,8 @@ function validerChoix(secteur, pct) {
         updateProgress();
         majRecap();
 
-        updateCentralReaction(secteur, pct); // Met à jour et garde jusqu’au prochain
+        // METTRE À JOUR LE PERSONNAGE (PERSISTANT)
+        updateCentralReaction(secteur, pct);
 
         let msg = data.message;
         if (pct < 15 && pct > 0) msg += `<br><span style="color:#c00;">Attention : ${secteur} en crise !</span>`;
@@ -197,7 +198,7 @@ function validerChoix(secteur, pct) {
         el.bulle.innerHTML = `<p>${msg}</p>`;
         showInfo(data.info);
         el.options.innerHTML = '';
-        setTimeout(chargerQuestion, 2500); // +700ms pour bien voir la réaction
+        setTimeout(chargerQuestion, 2500); // Temps pour voir la réaction
     });
 }
 
@@ -222,13 +223,19 @@ function choisirReste(peuple) {
 
 // === ÉVÉNEMENTS ===
 el.nextBtn.onclick = chargerQuestion;
-el.restartBtn.onclick = () => location.reload;
+el.restartBtn.onclick = () => location.reload();
 
-// === DÉMARRAGE ===
+// === DÉMARRAGE – NEUTRAL AFFICHÉ IMMÉDIATEMENT ===
 window.addEventListener('load', () => {
     updateProgress();
     majRecap();
     el.nextBtn.style.display = 'block';
-    el.reactionCenter.style.display = 'none'; // caché au départ
-    console.log("Jeu chargé. Clique sur Suivant !");
+
+    // NEUTRAL DÈS LE DÉBUT
+    el.reactionImg.src = '/static/neutral.png';
+    el.reactionImg.classList.add('loaded');
+    el.reactionLabel.textContent = 'Prêt à gérer le budget !';
+    el.reactionCenter.style.display = 'flex'; // Toujours visible
+
+    console.log("Jeu chargé. Personnage neutre affiché.");
 });

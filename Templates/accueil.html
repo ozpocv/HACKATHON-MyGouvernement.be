@@ -7,21 +7,24 @@
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-  <div class="container center-screen">
-    <h1>Budget de la Belgique</h1>
-    <h2 class="small">159 000 000 000 € à répartir</h2>
 
-    <div class="mode-selection">
-      <button class="mode-btn ecolo" onclick="setMode('Écolo')">Écolo</button>
-      <button class="mode-btn social" onclick="setMode('Social')">Social</button>
-      <button class="mode-btn" id="default-mode" onclick="setMode('Équilibré')">Équilibré</button>
+  <div class="accueil-container">
+    <div class="accueil-content">
+      <h1>Budget de la Belgique</h1>
+      <h2 class="small">159 000 000 000 € à répartir</h2>
+
+      <div class="mode-selection">
+        <button class="mode-btn ecolo" onclick="setMode('Écolo')">Écolo</button>
+        <button class="mode-btn social" onclick="setMode('Social')">Social</button>
+        <button class="mode-btn" id="default-mode" onclick="setMode('Équilibré')">Équilibré</button>
+      </div>
+
+      <button class="start-btn" id="btn-commencer" style="display: none;">
+        Commencer le jeu
+      </button>
+
+      <div class="info-box" id="info-culture" style="margin-top: 20px;"></div>
     </div>
-
-    <button class="start-btn" id="btn-commencer" style="display: none;">
-      Commencer le jeu
-    </button>
-
-    <div class="info-box" id="info-culture" style="margin-top: 20px;"></div>
   </div>
 
   <script>
@@ -40,9 +43,9 @@
       });
     }
 
-document.getElementById("btn-commencer").addEventListener("click", () => {
-  window.location.href = "/startbudgeting";
-});
+    document.getElementById("btn-commencer").addEventListener("click", () => {
+      window.location.href = "/startbudgeting";
+    });
 
     window.onload = () => setMode("Équilibré");
   </script>

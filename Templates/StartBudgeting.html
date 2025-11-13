@@ -7,40 +7,39 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div class="start-container">
-    <!-- Liste des secteurs à gauche -->
-    <div class="sectors-panel">
-      <button class="sector-btn">SANTÉ</button>
-      <button class="sector-btn">ÉDUCATION</button>
-      <button class="sector-btn">PROTECTION SOCIALE</button>
-      <button class="sector-btn">SECTEUR DE LA DÉFENSE</button>
-      <button class="sector-btn">DÉVELOPPEMENT ÉCONOMIQUE ET MOBILITÉ</button>
-    </div>
 
-    <!-- Personnage + Bulle -->
-    <div class="character-panel">
-      <!-- Bulle de dialogue -->
-      <div class="speech-bubble">
-        Hi! Can you help me make choices for a better future?
-      </div>
+  <!-- FOND APPARTEMENT -->
+  <div class="background"></div>
 
-      <!-- Personnage en grandeur nature, en dessous de la bulle -->
-      <img id="personnage" 
-           src="/static/pixlr-video-generator-69148a60-unscreen.gif" 
-           alt="Marc Dupont" 
-           class="character-img">
+  <!-- PERSONNAGE AU MILIEU -->
+  <div class="start-character-center">
+    <div class="speech-bubble">
+      Salut ! Peux-tu m’aider à faire des choix pour un avenir meilleur ?
     </div>
-
-    <!-- Panneau d'infos à droite avec bouton -->
-    <div class="info-panel">
-      <div class="info-card">
-        <p><strong>NOM :</strong> Marc Dupont.</p>
-        <p><strong>ÂGE :</strong> 35 ans.</p>
-        <p><strong>JOB :</strong> sans emploi.</p>
-        <p><strong>BUDGET :</strong> 100%.</p>
-      </div>
-      <button class="start-btn" onclick="window.location.href='/jeu'">START BUDGETING</button>
-    </div>
+    <img src="/static/pixlr-video-generator-69148a60-unscreen.gif" 
+         alt="Marc Dupont" 
+         class="start-character-img">
   </div>
+
+  <!-- SECTEURS À GAUCHE -->
+  <div class="start-sectors-panel">
+    <button class="sector-btn">SANTÉ</button>
+    <button class="sector-btn">ÉDUCATION</button>
+    <button class="sector-btn">PROTECTION SOCIALE</button>
+    <button class="sector-btn">SECTEUR DE LA DÉFENSE</button>
+    <button class="sector-btn">DÉVELOPPEMENT ÉCONOMIQUE ET MOBILITÉ</button>
+  </div>
+
+  <!-- INFOS À DROITE -->
+  <div class="start-info-panel">
+    <div class="info-card">
+      <p><strong>NOM :</strong> Marc Dupont</p>
+      <p><strong>ÂGE :</strong> 35 ans</p>
+      <p><strong>JOB :</strong> sans emploi</p>
+      <p><strong>BUDGET :</strong> 100 %</p>
+    </div>
+    <button class="start-btn" onclick="window.location.href='/jeu'">START BUDGETING</button>
+  </div>
+
 </body>
 </html>

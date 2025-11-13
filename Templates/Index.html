@@ -7,66 +7,43 @@
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-  <div class="container">
 
-    <!-- === EN-TÊTE === -->
+  <!-- FOND GLOBAL -->
+  <div class="background"></div>
+
+  <!-- PERSONNAGE AU MILIEU -->
+  <div class="reaction-center" id="reaction-center">
+    <img id="reaction-img" src="/static/neutral.png" alt="Personnage" class="loaded">
+    <p id="reaction-label">Prêt à gérer le budget !</p>
+  </div>
+
+  <!-- QUESTIONNAIRE FIXE À DROITE -->
+  <div class="questionnaire">
     <h1>Budget : {{ budget | format_number }} €</h1>
 
-    <!-- === CONTENEUR PRINCIPAL DU JEU === -->
-    <div class="game-container">
-
-      <!-- === PERSONNAGE RÉACTIF À GAUCHE (GRAND) === -->
-      <div class="reaction-center" id="reaction-center">
-        <img id="reaction-img" src="/static/neutral.png" alt="Réaction">
-        <p id="reaction-label"></p>
-      </div>
-
-      <!-- === QUESTIONNAIRE À DROITE === -->
-      <div class="questionnaire">
-
-        <!-- Barre de progression -->
-        <div class="progress-container">
-          <div class="progress" id="progress"></div>
-        </div>
-        <p class="total">Budget alloué : <span id="total">0</span>%</p>
-
-        <!-- Bulle de dialogue -->
-        <div class="bulle" id="bulle">
-          Appuie sur <strong>Suivant</strong> pour commencer !
-        </div>
-
-        <!-- Options de choix -->
-        <div class="options" id="options"></div>
-
-        <!-- Bouton Suivant -->
-        <button class="next-btn" id="nextBtn">Suivant</button>
-
-        <!-- Bouton Recommencer (caché au départ) -->
-        <button class="restart-btn" id="btn-recommencer" style="display: none;">
-          Recommencer
-        </button>
-
-        <!-- Info contextuelle -->
-        <div class="info-box" id="info-culture"></div>
-
-        <!-- Récapitulatif des choix -->
-        <ul class="recap" id="recapList"></ul>
-
-        <!-- Avertissement si reste à répartir -->
-        <div class="warning-box" id="warning-reste" style="display: none;">
-          <p>Il reste <span id="reste-pct">0</span>% à répartir !</p>
-          <button class="btn-peuple" onclick="choisirReste(true)">Donner au peuple</button>
-          <button class="btn-ministre" onclick="choisirReste(false)">Garder pour les ministres</button>
-        </div>
-
-      </div>
-      <!-- Fin .questionnaire -->
-
+    <div class="progress-container">
+      <div class="progress" id="progress"></div>
     </div>
-    <!-- Fin .game-container -->
+    <p class="total">Budget alloué : <span id="total">0</span>%</p>
 
+    <div class="bulle" id="bulle">
+      Appuie sur <strong>Suivant</strong> pour commencer !
+    </div>
+
+    <div class="options" id="options"></div>
+
+    <button class="next-btn" id="nextBtn">Suivant</button>
+    <button class="restart-btn" id="btn-recommencer" style="display: none;">Recommencer</button>
+
+    <div class="info-box" id="info-culture"></div>
+    <ul class="recap" id="recapList"></ul>
+
+    <div class="warning-box" id="warning-reste" style="display: none;">
+      <p>Il reste <span id="reste-pct">0</span>% à répartir !</p>
+      <button class="btn-peuple" onclick="choisirReste(true)">Donner au peuple</button>
+      <button class="btn-ministre" onclick="choisirReste(false)">Garder pour les ministres</button>
+    </div>
   </div>
-  <!-- Fin .container -->
 
   <script src="/static/script.js"></script>
 </body>
