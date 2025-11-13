@@ -40,7 +40,6 @@ function updateProgress() {
     elements.progress.style.width = total + "%";
 }
 
-// === GIF SELON SECTEURS SOUS-FINANCÉS ===
 function determinerGifParMoyenne() {
     const seuils = {
         "Protection sociale": 30,
@@ -88,12 +87,14 @@ elements.commencerBtn.addEventListener('click', () => {
     elements.personnage.src = "/static/neutral.gif";
 });
 
-elements.nextBtn.addEventListener('click', () => {
+// === FONCTION CLÉ : CHARGER LA PROCHAINE QUESTION ===
+function chargerProchaineQuestion() {
     fetch("/api/next", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ total, repartition }) })
     .then(r => r.json())
     .then(data => {
         showInfo(data.info);
 
+        // ÉVÉNEMENT POPUP
         if (data.evenement_popup) {
             alert(data.texte);
             elements.bulle.innerHTML = `<p class="event-warning"><strong>${data.texte}</strong></p><p>Clique sur Suivant pour appliquer.</p>`;
@@ -101,6 +102,7 @@ elements.nextBtn.addEventListener('click', () => {
             return;
         }
 
+        // ÉVÉNEMENT APPLIQUÉ
         if (data.evenement_applique) {
             total = data.total;
             repartition = data.repartition;
@@ -112,6 +114,7 @@ elements.nextBtn.addEventListener('click', () => {
             return;
         }
 
+        // FIN DU JEU
         if (data.fin) {
             total = data.total;
             repartition = data.repartition;
@@ -128,6 +131,7 @@ elements.nextBtn.addEventListener('click', () => {
             return;
         }
 
+        // QUESTION NORMALE
         elements.options.innerHTML = "";
         elements.bulle.innerHTML = `<p><strong>Question :</strong> ${data.texte}</p><p>Choisis un secteur :</p>`;
 
@@ -139,50 +143,16 @@ elements.nextBtn.addEventListener('click', () => {
         });
 
         elements.personnage.src = "/static/" + determinerGifParMoyenne();
-
-        function ajouterReaction(secteur, pourcentage) {
-            const gallery = elements.reactionGallery;
-
-            if ([...gallery.children].some(item => item.dataset.secteur === secteur)) {
-                return;
-            }
-
-            const item = document.createElement("div");
-            item.className = "reaction-item";
-            item.dataset.secteur = secteur;
-
-            let gifName = "reaction_neutral.gif";
-            let label = `${secteur}: ${pourcentage}%`;
-
-            if (pourcentage < 30 && pourcentage > 0) {
-                const map = {
-                    "Protection sociale": "low_social",
-                    "Santé": "low_sante",
-                    "Éducation": "low_education",
-                    "Défense": "low_defense",
-                    "Infrastructure": "low_infra"
-                };
-                gifName = `reaction_${map[secteur]}.gif`;
-                label = `${secteur}: ${pourcentage}% (en crise !)`;
-            } else if (pourcentage >= 50) {
-                gifName = "reaction_happy.gif";
-                label = `${secteur}: ${pourcentage}% (excellent !)`;
-            }
-
-            item.innerHTML = `
-                <img src="/static/${gifName}" alt="${secteur}">
-                <p>${label}</p>
-            `;
-
-            gallery.appendChild(item);
-
-            if (gallery.children.length > 5) {
-                gallery.removeChild(gallery.children[0]);
-            }
-        }
+        elements.nextBtn.style.display = "none"; // On cache "Suivant" après une question normale
     });
+}
+
+// Bouton "Suivant" manuel (uniquement pour événements ou démarrage)
+elements.nextBtn.addEventListener('click', () => {
+    chargerProchaineQuestion();
 });
 
+// === CHOISIR UN SECTEUR ===
 function choisirSecteur(secteur) {
     fetch("/api/options", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secteur }) })
     .then(r => r.json())
@@ -198,6 +168,7 @@ function choisirSecteur(secteur) {
     });
 }
 
+// === VALIDER LE CHOIX DE POURCENTAGE → PASSAGE AUTO ===
 function validerChoix(secteur, pourcentage) {
     fetch("/api/choix", { 
         method: "POST", 
@@ -212,7 +183,6 @@ function validerChoix(secteur, pourcentage) {
         majRecap();
 
         elements.personnage.src = "/static/" + determinerGifParMoyenne();
-
         ajouterReaction(secteur, pourcentage);
 
         let alerte = "";
@@ -227,14 +197,57 @@ function validerChoix(secteur, pourcentage) {
         elements.bulle.innerHTML = `<p>${res.message}${alerte}</p>`;
         showInfo(res.info);
         elements.options.innerHTML = "";
-        elements.nextBtn.style.display = total < 100 ? "block" : "none";
 
-        if (total >= 100) {
-            elements.restartBtn.style.display = "block";
-        }
+        // Passage automatique à la question suivante
+        setTimeout(() => {
+            chargerProchaineQuestion();
+        }, 1200); // Petit délai pour lire le message
     });
 }
 
+// === AJOUTER RÉACTION DANS LA GALLERY ===
+function ajouterReaction(secteur, pourcentage) {
+    const gallery = elements.reactionGallery;
+
+    if ([...gallery.children].some(item => item.dataset.secteur === secteur)) {
+        return;
+    }
+
+    const item = document.createElement("div");
+    item.className = "reaction-item";
+    item.dataset.secteur = secteur;
+
+    let gifName = "reaction_neutral.gif";
+    let label = `${secteur}: ${pourcentage}%`;
+
+    if (pourcentage < 30 && pourcentage > 0) {
+        const map = {
+            "Protection sociale": "low_social",
+            "Santé": "low_sante",
+            "Éducation": "low_education",
+            "Défense": "low_defense",
+            "Infrastructure": "low_infra"
+        };
+        gifName = `reaction_${map[secteur]}.gif`;
+        label = `${secteur}: ${pourcentage}% (en crise !)`;
+    } else if (pourcentage >= 50) {
+        gifName = "reaction_happy.gif";
+        label = `${secteur}: ${pourcentage}% (excellent !)`;
+    }
+
+    item.innerHTML = `
+        <img src="/static/${gifName}" alt="${secteur}">
+        <p>${label}</p>
+    `;
+
+    gallery.appendChild(item);
+
+    if (gallery.children.length > 5) {
+        gallery.removeChild(gallery.children[0]);
+    }
+}
+
+// === CHOIX FINAL : RESTE DU BUDGET ===
 function choisirReste(peuple) {
     fetch("/api/choix_reste", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ peuple }) })
     .then(r => r.json())

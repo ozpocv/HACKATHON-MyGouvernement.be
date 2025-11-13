@@ -7,7 +7,7 @@ app = Flask(__name__)
 # === CONFIG BELGIQUE ===
 BUDGET_TOTAL = 159_000_000_000
 SECTEURS = ["Protection sociale", "Santé", "Éducation", "Défense", "Infrastructure"]
-VALEURS_POSSIBLES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+VALEURS_POSSIBLES = [5, 10, 15, 20, 25, 30 ]
 
 MODES = {
     "Écolo": {"bonus": "Défense", "malus": "Infrastructure"},
