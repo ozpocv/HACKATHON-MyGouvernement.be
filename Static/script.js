@@ -48,19 +48,19 @@ function showInfo(text) {
 }
 
 function determinerGif() {
-    if (total >= 100) return 'happy.gif';
+    if (total >= 100) return 'happy.png';
     const bas = Object.entries(repartition).find(([s, v]) => v > 0 && v < 25);
     if (bas) {
         const map = {
-            "Protection sociale": "low_social.gif",
-            "Santé": "low_sante.gif",
-            "Éducation": "low_education.gif",
-            "Défense": "low_defense.gif",
-            "Infrastructure": "low_infra.gif"
+            "Protection sociale": "low_socialgit.png",
+            "Santé": "low_sante.png",
+            "Éducation": "low_education.png",
+            "Défense": "low_defense.png",
+            "Infrastructure": "low_infra.png"
         };
-        return map[bas[0]] || 'neutral.gif';
+        return map[bas[0]] || 'neutral.png';
     }
-    return 'neutral.gif';
+    return 'neutral.png';
 }
 
 function ajouterReaction(secteur, pct) {
@@ -70,7 +70,7 @@ function ajouterReaction(secteur, pct) {
     item.className = 'reaction-item';
     item.dataset.secteur = secteur;
 
-    let gif = 'neutral.gif';
+    let gif = 'neutral.png';
     let label = `${secteur}: ${pct}%`;
 
     if (pct < 25 && pct > 0) {
@@ -81,10 +81,10 @@ function ajouterReaction(secteur, pct) {
             "Défense": "low_defense",
             "Infrastructure": "low_infra"
         };
-        gif = `reaction_${map[secteur] || 'neutral'}.gif`;
+        gif = `reaction_${map[secteur] || 'neutral'}.png`;
         label += ' (en crise !)';
     } else if (pct >= 50) {
-        gif = 'reaction_happy.gif';
+        gif = 'reaction_happy.png';
         label += ' (excellent !)';
     } else if (pct >= 30) {
         const mapUp = {
@@ -95,12 +95,12 @@ function ajouterReaction(secteur, pct) {
             "Infrastructure": "up5"
         };
         const suffix = mapUp[secteur] || 'neutral';
-        gif = `reaction_${suffix}.gif`;
+        gif = `reaction_${suffix}.png`;
         label += ' (en progrès !)';
     }
 
     item.innerHTML = `
-        <img src="/static/${gif}" onerror="this.src='/static/neutral.gif'">
+        <img src="/static/${gif}" onerror="this.src='/static/neutral.png'">
         <p>${label}</p>
     `;
     el.reactionGallery.appendChild(item);
