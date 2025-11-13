@@ -86,6 +86,17 @@ function ajouterReaction(secteur, pct) {
     } else if (pct >= 50) {
         gif = 'reaction_happy.gif';
         label += ' (excellent !)';
+    } else if (pct >= 30) {
+        const mapUp = {
+            "Protection sociale": "up1",
+            "Santé": "up2",
+            "Éducation": "up3",
+            "Défense": "up4",
+            "Infrastructure": "up5"
+        };
+        const suffix = mapUp[secteur] || 'neutral';
+        gif = `reaction_${suffix}.gif`;
+        label += ' (en progrès !)';
     }
 
     item.innerHTML = `
