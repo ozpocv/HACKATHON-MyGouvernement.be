@@ -35,9 +35,9 @@ QUESTIONS = [
     {"texte": "Santé ou protection sociale : priorité ?", "secteurs": ["Santé", "Protection sociale"]},
     {"texte": "Défense ou éducation : que choisir ?", "secteurs": ["Défense", "Éducation"]},
     {"texte": "Infrastructure ou santé : investissement ?", "secteurs": ["Infrastructure", "Santé"]},
-    {"texte": "Protection sociale ou environnement : option ?", "secteurs": ["Protection sociale", "Défense"]},
+    {"texte": "Protection sociale ou Défense : option ?", "secteurs": ["Protection sociale", "Défense"]},
     {"texte": "Éducation ou santé : nouveau choix ?", "secteurs": ["Éducation", "Santé"]},
-    {"texte": "Infrastructure ou environnement : décision ?", "secteurs": ["Infrastructure", "Défense"]}
+    {"texte": "Infrastructure ou Défense : décision ?", "secteurs": ["Infrastructure", "Défense"]}
 ]
 
 EVENEMENTS = [
@@ -106,7 +106,7 @@ def index():
 def api_mode():
     global mode_jeu
     data = request.json
-    mode_jeu = data.get("mode", "Équilibré")
+    mode_jeu = data.get("mode", "Équilibre")
     return jsonify({"mode": mode_jeu, "info": random.choice(INFOS_BELGIQUE)})
 
 
