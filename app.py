@@ -17,13 +17,14 @@ MODES = {
 
 # 20 QUESTIONS UNIQUES
 QUESTIONS = [
-    {"texte": "La santé et l'éducation nécessitent plus de financement. Où veux-tu investir ?", "secteurs": ["Santé", "Éducation"]},
-    {"texte": "Protéger l'environnement ou développer les infrastructures ?", "secteurs": ["Environnement", "Infrastructure"]},
-    {"texte": "Renforcer la protection sociale ou améliorer la santé ?", "secteurs": ["Protection sociale", "Santé"]},
-    {"texte": "Éducation ou santé : que privilégies-tu ?", "secteurs": ["Éducation", "Santé"]},
-    {"texte": "Investir dans l'environnement ou les infrastructures ?", "secteurs": ["Environnement", "Infrastructure"]},
-    {"texte": "Protection sociale ou éducation : quelle priorité ?", "secteurs": ["Protection sociale", "Éducation"]},
-    {"texte": "Santé ou environnement : où allouer plus ?", "secteurs": ["Santé", "Environnement"]},
+    {"texte": "Le Premier ministre veut attribuer un montant dans la santé, mais il hésite aussi à les implémentés dans les prestations social.", "secteurs": ["Santé", "Protection sociale"]},
+    {"texte": "Génial, le gouvernement veut investir dans l'éducation ! Qu'est-ce qu'il ne ferait pas pour nos chers écoliers. Mais aussi madame la femme du Premier ministre s'inquiète pour sa maison de vacances sur la cote belge. Doit-on mettre le budget dans la défense ?", "secteurs": ["Éducation", "Infrastructure"]},
+    {"texte": "Oh non, Monsieur le Premier ministre a retweeté un poste que le chef d'Etat d'un pays voisin n'a pas apprécié (apparemment, il existe des gens qui n'aiment pas les chats pilotant des chars.). Doit-on anticiper un conflit futur ou renforcé nos infrastructures et nos transports publics ?", "secteurs": ["Santé", "Infrastructure"]},
+    {"texte": "Les temps sont durs au gouvernement et la dette s'agrandit de jour en jour, rien que ce matin Monsieur le Premier ministre n'a pris qu'UNE seule flûte de champagne pour son petit-déjeuner. Mais où vas le monde ?! Il a donc décider d'investir dans nos futurs mathématiciens pour régler le problème, mais au même moment son jardinier, c'est mis à éternuer. Oh non une nouvelle épidémie ?", "secteurs": ["Éducation", "Santé"]},
+    {"texte": "L'usine de boîte de céréale du pays a décidé de changer d'air et de s'installer en Chine laissant derrière elle de nombreuses personnes mécontentes qui se sont réunies dans les rues. Doit-on mettre plus de budget dans la protection sociale en attendant que ce beau monde ce calme ou entretenir les trottoirs dont les morceaux servent de projectile au mécontentement social ?", "secteurs": ["Protection sociale", "Infrastructure"]},
+    {"texte": "C'est Noel ! Les fêtes le sapin ! Que de réjouissances ho hoo hoo. Quand Monsieur le Premier ministre ouvris son courrier ce matin, il fut scandalisé des fautes d'orthographe sur ses cartes de fin d'année, 'non mais tout le monde sais qu'éléphant s'écrit avec un f' il décide de mettre plus d'argent dans l'éducation. Mais d'un autre côté, le froid hivernal a fait geler les sols provoquant une nuée de patients glissant vers les hôpitaux.", "secteurs": ["Éducation", "Santé"]},
+    
+    {"texte": "Sortez vos vélos ! C'est bientôt la journée sans voiture, mais les pistes cyclables ne sont pas encore prêtes, doivent, on implémenter plus de fond dans les infrastructures afin d'entre sûr qu'elles soit prête pour cette journée ou renforcé la défense en prévision du conflit annuel des fans de rolleur contre leurs ennemies jurées les fans de patins à roulettes.", "secteurs": ["Infrastructure", "Sécurité"]},
     {"texte": "Éducation ou environnement : que choisir ?", "secteurs": ["Éducation", "Environnement"]},
     {"texte": "Infrastructure ou protection sociale : quelle option ?", "secteurs": ["Infrastructure", "Protection sociale"]},
     {"texte": "Santé ou infrastructure : priorité à quoi ?", "secteurs": ["Santé", "Infrastructure"]},
