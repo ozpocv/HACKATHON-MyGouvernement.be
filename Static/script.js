@@ -16,7 +16,8 @@ const elements = {
     recapList: document.getElementById('recapList'),
     infoBox: document.getElementById('info-culture'),
     warningReste: document.getElementById('warning-reste'),
-    restePct: document.getElementById('reste-pct')
+    restePct: document.getElementById('reste-pct'),
+    reactionGallery: document.getElementById('reaction-gallery'),
 };
 
 function majRecap() {
@@ -24,7 +25,7 @@ function majRecap() {
     for (let sec in repartition) {
         const montant = Math.round(repartition[sec] / 100 * BUDGET_TOTAL).toLocaleString('fr-BE');
         const li = document.createElement("li");
-        li.innerHTML = `<strong>${sec}:</strong> ${repartition[sec]}% → ${montant} €`;
+        li.innerHTML = `<strong>${sec}:</strong> ${repartition[sec]}% -> ${montant} €`;
         elements.recapList.appendChild(li);
     }
 }
@@ -37,6 +38,35 @@ function showInfo(text) {
 function updateProgress() {
     elements.total.innerText = total;
     elements.progress.style.width = total + "%";
+}
+
+// === NOUVELLE FONCTION : GIF SELON SECTEURS SOUS-FINANCÉS ===
+function determinerGifParMoyenne() {
+    const seuils = {
+        "Protection sociale": 30,
+        "Santé": 30,
+        "Éducation": 30,
+        "Environnement": 30,
+        "Infrastructure": 30
+    };
+
+    const gifsNegatifs = {
+        "Protection sociale": "low_social.gif",
+        "Santé": "low_sante.gif",
+        "Éducation": "low_education.gif",
+        "Environnement": "low_environnement.gif",
+        "Infrastructure": "low_infra.gif"
+    };
+
+    // Cherche le premier secteur sous-financé
+    for (let sec in seuils) {
+        if (repartition[sec] > 0 && repartition[sec] < seuils[sec]) {
+            return gifsNegatifs[sec];
+        }
+    }
+
+    // Sinon : neutre ou victoire
+    return total >= 100 ? "happy.gif" : "neutral.gif";
 }
 
 function setMode(mode) {
@@ -57,6 +87,7 @@ elements.commencerBtn.addEventListener('click', () => {
     elements.bulle.innerHTML = "Appuie sur <strong>Suivant</strong> pour commencer !";
     majRecap();
     updateProgress();
+    elements.personnage.src = "/static/neutral.gif"; // Réinitialisation
 });
 
 elements.nextBtn.addEventListener('click', () => {
@@ -74,9 +105,10 @@ elements.nextBtn.addEventListener('click', () => {
 
         if (data.evenement_applique) {
             total = data.total;
-            repartition = data.repartition;
+            repartition = data.repartition;  // CORRIGÉ : était "=.data"
             updateProgress();
             majRecap();
+            elements.personnage.src = "/static/" + determinerGifParMoyenne();
             elements.bulle.innerHTML = `<p class="event-applied"><strong>${data.texte}</strong></p><p>Appuie sur Suivant.</p>`;
             elements.nextBtn.style.display = "block";
             return;
@@ -95,8 +127,6 @@ elements.nextBtn.addEventListener('click', () => {
             if (data.choix_reste) {
                 elements.restePct.innerText = data.reste;
                 elements.warningReste.style.display = "block";
-            } else {
-                elements.restartBtn.style.display = "block";  // FORCER SI PAS CHOIX RESTE
             }
             return;
         }
@@ -111,6 +141,52 @@ elements.nextBtn.addEventListener('click', () => {
             btn.onclick = () => choisirSecteur(sec);
             elements.options.appendChild(btn);
         });
+
+        // Mise à jour du GIF après chaque question (au cas où)
+        elements.personnage.src = "/static/" + determinerGifParMoyenne();
+
+        function ajouterReaction(secteur, pourcentage) {
+    const gallery = elements.reactionGallery;
+
+    // Éviter les doublons
+    if ([...gallery.children].some(item => item.dataset.secteur === secteur)) {
+        return;
+    }
+
+    const item = document.createElement("div");
+    item.className = "reaction-item";
+    item.dataset.secteur = secteur;
+
+    let gifName = "reaction_neutral.gif";
+    let label = `${secteur}: ${pourcentage}%`;
+
+    if (pourcentage < 30 && pourcentage > 0) {
+        const map = {
+            "Protection sociale": "low_social",
+            "Santé": "low_sante",
+            "Éducation": "low_education",
+            "Environnement": "low_environnement",
+            "Infrastructure": "low_infra"
+        };
+        gifName = `reaction_${map[secteur]}.gif`;
+        label = `${secteur}: ${pourcentage}% (en crise !)`;
+    } else if (pourcentage >= 50) {
+        gifName = "reaction_happy.gif";
+        label = `${secteur}: ${pourcentage}% (excellent !)`;
+    }
+
+    item.innerHTML = `
+        <img src="/static/${gifName}" alt="${secteur}">
+        <p>${label}</p>
+    `;
+
+    gallery.appendChild(item);
+
+    // Optionnel : supprimer les anciennes réactions si trop
+    if (gallery.children.length > 5) {
+        gallery.removeChild(gallery.children[0]);
+    }
+}
     });
 });
 
@@ -130,24 +206,44 @@ function choisirSecteur(secteur) {
 }
 
 function validerChoix(secteur, pourcentage) {
-    fetch("/api/choix", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secteur, pourcentage, total, repartition }) })
+    fetch("/api/choix", { 
+        method: "POST", 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ secteur, pourcentage, total, repartition }) 
+    })
     .then(r => r.json())
     .then(res => {
         total = res.total;
         repartition = res.repartition;
         updateProgress();
         majRecap();
-        elements.personnage.src = "/static/" + res.gif;
-        elements.bulle.innerHTML = `<p>${res.message}</p>`;
+
+        // === GIF PERSONNAGE (ancien) ===
+        elements.personnage.src = "/static/" + determinerGifParMoyenne();
+
+        // === NOUVEAU : GIF DANS LA GALLERY ===
+        ajouterReaction(secteur, pourcentage);
+
+        // === MESSAGE D'ALERTE ===
+        let alerte = "";
+        const seuils = { "Protection sociale":30, "Santé":30, "Éducation":30, "Environnement":30, "Infrastructure":30 };
+        for (let sec in seuils) {
+            if (repartition[sec] > 0 && repartition[sec] < 30) {
+                alerte = `<br><span style="color:#c00;font-weight:bold;">Attention ! ${sec} est sous-financé !</span>`;
+                break;
+            }
+        }
+
+        elements.bulle.innerHTML = `<p>${res.message}${alerte}</p>`;
         showInfo(res.info);
         elements.options.innerHTML = "";
         elements.nextBtn.style.display = total < 100 ? "block" : "none";
 
-        // SI TOTAL >= 100 APRÈS CHOIX, FORCER RECOMMENCER
         if (total >= 100) {
             elements.restartBtn.style.display = "block";
         }
     });
+
 }
 
 function choisirReste(peuple) {

@@ -123,3 +123,35 @@ h1 { text-align: center; color: #d32f2f; margin-bottom: 10px; }
 .event-applied {
     background: #4caf50; color: white; padding: 10px; border-radius: 8px; font-weight: bold; margin: 10px 0;
 }
+.reaction-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    min-height: 100px;
+    justify-content: center;
+}
+
+.reaction-item {
+    text-align: center;
+    max-width: 120px;
+}
+
+.reaction-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.reaction-item p {
+    margin: 8px 0 0;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #333;
+}
