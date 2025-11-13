@@ -183,7 +183,7 @@ def api_next():
                 "fin": True,
                 "total": total_alloue(),
                 "reste": reste,
-                "gif": "neutral.gif",
+                "gif": "neutral.png",
                 "message": f"Budget presque complet ! Il reste {reste}% à répartir.",
                 "repartition": repartition,
                 "info": info,
@@ -194,7 +194,7 @@ def api_next():
             "fin": True,
             "total": 100,
             "reste": 0,
-            "gif": "happy.gif",
+            "gif": "happy.png",
             "message": message,
             "repartition": repartition,
             "info": info,
@@ -232,7 +232,7 @@ def api_choix():
     if total_avant >= 100:
         return jsonify({
             "total": 100,
-            "gif": "neutral.gif",
+            "gif": "neutral.png",
             "message": "Budget complet !",
             "secteur": secteur,
             "pourcentage": 0,
@@ -246,7 +246,7 @@ def api_choix():
     if pct <= 0:
         return jsonify({
             "total": total_avant,
-            "gif": "neutral.gif",
+            "gif": "neutral.png",
             "message": "Pas assez de budget !",
             "secteur": secteur,
             "pourcentage": 0,
@@ -258,7 +258,7 @@ def api_choix():
 
     return jsonify({
         "total": total_alloue(),
-        "gif": "happy.gif" if total_alloue() >= 100 else "neutral.gif",
+        "gif": "happy.png" if total_alloue() >= 100 else "neutral.png",
         "message": f"{secteur} : +{pct}%",
         "secteur": secteur,
         "pourcentage": pct,
@@ -289,7 +289,7 @@ def api_choix_reste():
         message = f"Les {reste}% sont allés dans la poche des ministres..."
     return jsonify({
         "total": 100,
-        "gif": "happy.gif",
+        "gif": "happy.png",
         "message": message,
         "repartition": repartition,
         "peuple": choix
