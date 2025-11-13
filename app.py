@@ -6,11 +6,11 @@ app = Flask(__name__)
 
 # === CONFIG BELGIQUE ===
 BUDGET_TOTAL = 159_000_000_000
-SECTEURS = ["Protection sociale", "Santé", "Éducation", "Environnement", "Infrastructure"]
+SECTEURS = ["Protection sociale", "Santé", "Éducation", "Défense", "Infrastructure"]
 VALEURS_POSSIBLES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
 
 MODES = {
-    "Écolo": {"bonus": "Environnement", "malus": "Infrastructure"},
+    "Écolo": {"bonus": "Défense", "malus": "Infrastructure"},
     "Social": {"bonus": "Protection sociale", "malus": "Éducation"},
     "Équilibré": {}
 }
@@ -19,25 +19,25 @@ MODES = {
 QUESTIONS = [
     {"texte": "Le Premier ministre veut attribuer un montant dans la santé, mais il hésite aussi à les implémentés dans les prestations social.", "secteurs": ["Santé", "Protection sociale"]},
     {"texte": "Génial, le gouvernement veut investir dans l'éducation ! Qu'est-ce qu'il ne ferait pas pour nos chers écoliers. Mais aussi madame la femme du Premier ministre s'inquiète pour sa maison de vacances sur la cote belge. Doit-on mettre le budget dans la défense ?", "secteurs": ["Éducation", "Infrastructure"]},
-    {"texte": "Oh non, Monsieur le Premier ministre a retweeté un poste que le chef d'Etat d'un pays voisin n'a pas apprécié (apparemment, il existe des gens qui n'aiment pas les chats pilotant des chars.). Doit-on anticiper un conflit futur ou renforcé nos infrastructures et nos transports publics ?", "secteurs": ["Santé", "Infrastructure"]},
+    {"texte": "Oh non, Monsieur le Premier ministre a retweeté un poste que le chef d'Etat d'un pays voisin n'a pas apprécié (apparemment, il existe des gens qui n'aiment pas les chats pilotant des chars.). Doit-on anticiper un conflit futur ou renforcé nos infrastructures et nos transports publics ?", "secteurs": ["Infrastructure", "Défense"]},
     {"texte": "Les temps sont durs au gouvernement et la dette s'agrandit de jour en jour, rien que ce matin Monsieur le Premier ministre n'a pris qu'UNE seule flûte de champagne pour son petit-déjeuner. Mais où vas le monde ?! Il a donc décider d'investir dans nos futurs mathématiciens pour régler le problème, mais au même moment son jardinier, c'est mis à éternuer. Oh non une nouvelle épidémie ?", "secteurs": ["Éducation", "Santé"]},
     {"texte": "L'usine de boîte de céréale du pays a décidé de changer d'air et de s'installer en Chine laissant derrière elle de nombreuses personnes mécontentes qui se sont réunies dans les rues. Doit-on mettre plus de budget dans la protection sociale en attendant que ce beau monde ce calme ou entretenir les trottoirs dont les morceaux servent de projectile au mécontentement social ?", "secteurs": ["Protection sociale", "Infrastructure"]},
     {"texte": "C'est Noel ! Les fêtes le sapin ! Que de réjouissances ho hoo hoo. Quand Monsieur le Premier ministre ouvris son courrier ce matin, il fut scandalisé des fautes d'orthographe sur ses cartes de fin d'année, 'non mais tout le monde sais qu'éléphant s'écrit avec un f' il décide de mettre plus d'argent dans l'éducation. Mais d'un autre côté, le froid hivernal a fait geler les sols provoquant une nuée de patients glissant vers les hôpitaux.", "secteurs": ["Éducation", "Santé"]},
-    
-    {"texte": "Sortez vos vélos ! C'est bientôt la journée sans voiture, mais les pistes cyclables ne sont pas encore prêtes, doivent, on implémenter plus de fond dans les infrastructures afin d'entre sûr qu'elles soit prête pour cette journée ou renforcé la défense en prévision du conflit annuel des fans de rolleur contre leurs ennemies jurées les fans de patins à roulettes.", "secteurs": ["Infrastructure", "Sécurité"]},
-    {"texte": "Éducation ou environnement : que choisir ?", "secteurs": ["Éducation", "Environnement"]},
-    {"texte": "Infrastructure ou protection sociale : quelle option ?", "secteurs": ["Infrastructure", "Protection sociale"]},
+    {"texte": "Sortez vos vélos ! C'est bientôt la journée sans voiture, mais les pistes cyclables ne sont pas encore prêtes, doivent, on implémenter plus de fond dans les infrastructures afin d'entre sûr qu'elles soit prête pour cette journée ou renforcé la défense en prévision du conflit annuel des fans de rolleur contre leurs ennemies jurées les fans de patins à roulettes.", "secteurs": ["Infrastructure", "Défense"]},
+    {"texte": "'Les nouvelles du jour : une météorite a touché la maison de notre cher Premier ministre, il en est sur c'est un coup des Martiens !' Devons-nous renforcer nos mesures de sécurité en créant une force de police dans l'espace ou plutôt nous attacher à réparer les effets de la météorite lors de son passage ?", "secteurs": ["Défense", "Infrastructure"]},
+    {"texte": "C'est le black friday ! Les nouveau char dernière cris son en solde sur le site de la défense une affaire à saisir pour le gouvernement, mais il hésite, les professeurs ce plaignent des conditions de travail.", "secteurs": ["Défense", "Éducation"]},
+   
     {"texte": "Santé ou infrastructure : priorité à quoi ?", "secteurs": ["Santé", "Infrastructure"]},
-    {"texte": "Environnement ou santé : investissement clé ?", "secteurs": ["Environnement", "Santé"]},
+    {"texte": "Défense ou santé : investissement clé ?", "secteurs": ["Défense", "Santé"]},
     {"texte": "Protection sociale ou infrastructure : que privilégier ?", "secteurs": ["Protection sociale", "Infrastructure"]},
     {"texte": "Éducation ou protection sociale : où investir ?", "secteurs": ["Éducation", "Protection sociale"]},
     {"texte": "Infrastructure ou éducation : quel choix ?", "secteurs": ["Infrastructure", "Éducation"]},
     {"texte": "Santé ou protection sociale : priorité ?", "secteurs": ["Santé", "Protection sociale"]},
-    {"texte": "Environnement ou éducation : que choisir ?", "secteurs": ["Environnement", "Éducation"]},
+    {"texte": "Défense ou éducation : que choisir ?", "secteurs": ["Défense", "Éducation"]},
     {"texte": "Infrastructure ou santé : investissement ?", "secteurs": ["Infrastructure", "Santé"]},
-    {"texte": "Protection sociale ou environnement : option ?", "secteurs": ["Protection sociale", "Environnement"]},
+    {"texte": "Protection sociale ou environnement : option ?", "secteurs": ["Protection sociale", "Défense"]},
     {"texte": "Éducation ou santé : nouveau choix ?", "secteurs": ["Éducation", "Santé"]},
-    {"texte": "Infrastructure ou environnement : décision ?", "secteurs": ["Infrastructure", "Environnement"]}
+    {"texte": "Infrastructure ou environnement : décision ?", "secteurs": ["Infrastructure", "Défense"]}
 ]
 
 EVENEMENTS = [
@@ -45,20 +45,20 @@ EVENEMENTS = [
     {"texte": "Inondations en Wallonie ! +10 % infrastructure.", "secteur": "Infrastructure", "impact": 10},
     {"texte": "Grève sociale ! +10 % protection sociale.", "secteur": "Protection sociale", "impact": 10},
     {"texte": "Réforme scolaire réussie ! –5 % éducation.", "secteur": "Éducation", "impact": -5},
-    {"texte": "Accord climat UE ! –5 % environnement.", "secteur": "Environnement", "impact": -5},
+    {"texte": "Accord climat UE ! –5 % Défense.", "secteur": "Défense", "impact": -5},
 ]
 
 INFOS_BELGIQUE = [
     "Le budget fédéral belge 2024 est d'environ 159 milliards €.",
     "La sécurité sociale représente ~30 % du budget belge.",
     "La Belgique dépense 6,1 % de son PIB en éducation.",
-    "Le Plan National Climat vise la neutralité carbone en 2050.",
+    "Le Plan National protection du pays.",
     "Les infrastructures routières belges sont parmi les plus denses d'Europe.",
     "Le système de santé belge est financé à 77 % par la sécurité sociale.",
 ]
 
 MESSAGES_FIN = {
-    "Écolo": "Félicitations ! Ton gouvernement vert a sauvé la planète !",
+    "Défense": "Félicitations ! Ton gouvernement à rendu ton pays plus sûr !",
     "Social": "Bravo ! Tu as protégé les plus vulnérables. Solidarité !",
     "Équilibré": "Équilibre parfait. Tu es un maître du compromis !"
 }

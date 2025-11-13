@@ -180,8 +180,14 @@
         <mxCell id="mlSBxbuKVNfJgENnmSgi-3" value="C&#39;est Noel ! Les fêtes le sapin ! Que de réjouissances ho hoo hoo. Quand Monsieur le Premier ministre ouvris son courrier ce matin, il fut scandalisé des fautes d&#39;orthographe sur ses cartes de fin d&#39;année, &quot;non mais tout le monde sais qu&#39;éléphant s&#39;écrit avec un f &quot; il décide de mettre plus d&#39;argent dans l&#39;éducation. Mais d&#39;un autre côté, le froid hivernal a fait geler les sols provoquant une nuée de patients glissant vers les hôpitaux." style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="719" y="1670" width="381.25" height="160" as="geometry" />
         </mxCell>
-        <mxCell id="mlSBxbuKVNfJgENnmSgi-5" value="C&#39;est Noel ! Les fêtes le sapin ! Que de réjouissances ho hoo hoo. Quand Monsieur le Premier ministre ouvris son courrier ce matin, il fut scandalisé des fautes d&#39;orthographe sur ses cartes de fin d&#39;année, &quot;non mais tout le monde sais qu&#39;éléphant s&#39;écrit avec un f &quot; il décide de mettre plus d&#39;argent dans l&#39;éducation. Mais d&#39;un autre côté, le froid hivernal a fait geler les sols provoquant une nuée de patients glissant vers les hôpitaux." style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="719" y="1910" width="381.25" height="160" as="geometry" />
+        <mxCell id="mlSBxbuKVNfJgENnmSgi-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="mlSBxbuKVNfJgENnmSgi-5" target="mlSBxbuKVNfJgENnmSgi-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mlSBxbuKVNfJgENnmSgi-5" value="Sortez vos vélos ! C&#39;est bientôt la journée sans voiture, mais les pistes cyclables ne sont pas encore prêtes, doivent, on implémenter plus de fond dans les infrastructures afin d&#39;entre sûr qu&#39;elles soit prête pour cette journée ou renforcé la défense en prévision du conflit annuel des fans de rolleur contre leurs ennemies jurées les fans de patins à roulettes." style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="719" y="1900" width="381.25" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="mlSBxbuKVNfJgENnmSgi-9" value="C&#39;est le black friday ! Les nouveau char dernière cris son en solde sur le site de la défense une affaire à saisir pour le gouvernement, mais il hésite, les professeurs ce plaignent des conditions de travail." style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="719" y="2150" width="381.25" height="160" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
