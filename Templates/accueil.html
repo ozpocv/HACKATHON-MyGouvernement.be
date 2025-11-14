@@ -4,50 +4,76 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Budget 159 Milliards - Accueil</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/acceuil.css" />
 </head>
 <body>
 
-  <div class="accueil-container">
-    <div class="accueil-content">
+  <div class="header">
+    
+  </div> 
+
+  <div class="container">
+    <div class="left-section">
+      <h1 class="logo">MyGouvernement.be</h1>
       <h1>Budget de la Belgique</h1>
       <h2 class="small">159 000 000 000 € à répartir</h2>
-
-      <div class="mode-selection">
-        <button class="mode-btn ecolo" onclick="setMode('Écolo')">Écolo</button>
-        <button class="mode-btn social" onclick="setMode('Social')">Social</button>
-        <button class="mode-btn" id="default-mode" onclick="setMode('Équilibré')">Équilibré</button>
+      <div class="text-box">
+        Lorem ipsum dolor sit amet consectetur. Dui fermentum nerus fermentum auctor odio in auguet id. Sed nec accumsan tortor brachard. Faucibus volutpat auctor nust porta odio. Lectus vitae habitant a sit et velit bibendum ultrices tempor tortor. Mattis nerus et dignissim gravida. Diam nullam in quis adipiscing enim mollis ipsum imperdiet. Tellus pretium et lorem sit. Rutrum amet mast apustur porttitor lorem. Arcu ultrices fusce hac mauris.
       </div>
 
-      <button class="start-btn" id="btn-commencer" style="display: none;">
+      <a href="/startbudgeting" class="start-btn" id="btn-commencer">
         Commencer le jeu
-      </button>
-
-      <div class="info-box" id="info-culture" style="margin-top: 20px;"></div>
+      </a>
     </div>
-  </div>
+    <div class="right-section">
+      <div class="carousel-container">
+        <button class="carousel-arrow left" onclick="previousImage()">‹</button>
+        <img id="carouselImage" class="carousel-image" src="./static/neutral.png" alt="Character"> <!-- Image initiale -->
+        <button class="carousel-arrow right" onclick="nextImage()">›</button>
+      </div>
+    </div>
 
-  <script>
-    function setMode(mode) {
-      fetch("/api/mode", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode })
-      })
-      .then(r => r.json())
-      .then(data => {
-        document.getElementById("info-culture").textContent = data.info;
-        document.querySelectorAll('.mode-btn').forEach(b => b.style.opacity = 0.6);
-        document.querySelector(`[onclick="setMode('${mode}')"]`).style.opacity = 1;
-        document.getElementById("btn-commencer").style.display = "block";
-      });
+
+
+
+    
+    <script>
+      const images = [
+    './static/neutral.png',
+    './static/content.png',
+    './static/low_infra.png',
+    './static/low_education.png',
+    './static/low_security.png',
+    './static/low_social.png'
+];
+
+let currentIndex = 0;
+
+function updateImage() {
+    const imgElement = document.getElementById('carouselImage');
+    if (imgElement && images[currentIndex]) {
+        imgElement.src = images[currentIndex];
     }
+}
 
-    document.getElementById("btn-commencer").addEventListener("click", () => {
-      window.location.href = "/startbudgeting";
-    });
+function nextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
+    updateImage();
+}
 
-    window.onload = () => setMode("Équilibré");
-  </script>
+function previousImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;  // Décrémenter l'indice, boucle à la fin
+    updateImage();
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateImage();
+});
+
+
+    </script>
+
+    
 </body>
 </html>
