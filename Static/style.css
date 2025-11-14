@@ -148,7 +148,7 @@ body {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    width: 420px;
+    width: 450px;
     display: flex;
     flex-direction: column;
     gap: 22px;
@@ -235,7 +235,7 @@ body {
     line-height: 2;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.7);
-    max-width: 340px;
+    max-width: none;
     width: 100%;
     text-align: left;
 }
