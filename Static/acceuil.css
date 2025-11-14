@@ -3,13 +3,13 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Segoe', Arial, sans-serif;
     background-color: white;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-
 }
 .header {
     background-color: #3d5a6c;
@@ -72,15 +72,23 @@ body {
 }
 
 .right-section {
-    width: 550px;
+    flex: 1;
+    min-width: 280px;
+    width: 100%;
+    max-width: 550px;
     background-color: #e8f2f0;
-    height: 750px;
-    max-width: 100%;
+    height: auto;
     border-radius: 15px;
-    flex-shrink: 0;
-    margin-top: 50px;
-    margin-left: 300px;
     overflow: hidden;
+    margin-top: 0;
+    /* Shadow moderne */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.right-section:hover {
+    transform: translateY(-10px); /* léger effet de flottement */
+    box-shadow: 0 30px 60px rgba(0,0,0,0.2), 0 15px 30px rgba(0,0,0,0.15);
 }
 
 .bottom-bar {
@@ -162,8 +170,8 @@ body {
 }
 
 .start-btn {
-    margin-top: 40px; /* MARGE ENTRE FICHE ET BOUTON */
-    background:;
+    margin-top: 40px;
+    background: linear-gradient(135deg,#3d5a6c,#5a7a8c);
     color: white;
     border: none;
     padding: 24px 54px;
@@ -177,16 +185,20 @@ body {
     box-shadow: 0 14px 32px rgba(61, 90, 108, 0.9);
     width: 100%;
     max-width: 340px;
+   
 }
 
 .start-btn:hover {
-    background: rgba(61, 90, 108, 0.9);
     transform: scale(1.14);
-    box-shadow: 0 18px 40px rgba(61, 90, 108, 0.9);
+    box-shadow: 0 20px 40px rgba(61, 90, 108, 0.9); 
+    background: linear-gradient(135deg,#5a7a8c,#3d5a6c);
 }
+
 
 a.start-btn {
     display: inline-block;
     text-decoration: none;
     text-align: center;
 }
+
+
