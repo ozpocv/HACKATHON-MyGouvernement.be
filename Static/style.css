@@ -283,9 +283,9 @@ body {
 }
 
 #reaction-img {
-    width: 450px;
-    max-width: 450px;
-    max-height: 90vh;
+    width: 600px;
+    max-width: 600px;
+    max-height: 75vh;
     object-fit: contain;
     opacity: 0;
     transition: opacity 1.2s ease;

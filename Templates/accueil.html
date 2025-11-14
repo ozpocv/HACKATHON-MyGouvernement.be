@@ -8,76 +8,70 @@
 </head>
 <body>
 
-  <div class="header">
-    
-  </div> 
+  <div class="header"></div> 
 
   <div class="container">
+    <!-- LEFT SECTION -->
     <div class="left-section">
       <h1 class="logo">MyGouvernement.be</h1>
-      <h1>Budget de la Belgique</h1>
+      <h1 class="page-title">Budget de la Belgique</h1>
       <h2 class="small">159 000 000 000 € à répartir</h2>
+
       <div class="text-box">
         Bienvenue sur MyGouvernement.be !  
         Te voilà propulsé à la tête d’un tout nouveau pays. À toi de gérer le budget de l’État, de décider où investir, et de faire face aux surprises de la vie politique ! Tes choix façonneront ton gouvernement et influenceront la personnalité de ton dirigeant.  
         Équilibre les comptes, garde le peuple heureux… et surtout, essaie de ne pas finir en crise !  
-        Prêt à diriger ton propre gouvernement ?  
-        (ca c'est le texte dans la page accueil c'est bon pour vous ?)
+        Prêt à diriger ton propre gouvernement ?
       </div>
 
       <a href="/startbudgeting" class="start-btn" id="btn-commencer">
         Commencer le jeu
       </a>
     </div>
+
+    <!-- RIGHT SECTION / CAROUSEL -->
     <div class="right-section">
       <div class="carousel-container">
         <button class="carousel-arrow left" onclick="previousImage()">‹</button>
-        <img id="carouselImage" class="carousel-image" src="./static/neutral.png" alt="Character"> <!-- Image initiale -->
+        <img id="carouselImage" class="carousel-image" src="./static/neutral.png" alt="Character">
         <button class="carousel-arrow right" onclick="nextImage()">›</button>
       </div>
     </div>
+  </div>
 
+  <script>
+    const images = [
+      './static/neutral.png',
+      './static/content.png',
+      './static/low_infra.png',
+      './static/low_education.png',
+      './static/low_defense.png',
+      './static/low_social.png'
+    ];
 
+    let currentIndex = 0;
 
-
-    
-    <script>
-      const images = [
-    './static/neutral.png',
-    './static/content.png',
-    './static/low_infra.png',
-    './static/low_education.png',
-    './static/low_defense.png',
-    './static/low_social.png'
-];
-
-let currentIndex = 0;
-
-function updateImage() {
-    const imgElement = document.getElementById('carouselImage');
-    if (imgElement && images[currentIndex]) {
-        imgElement.src = images[currentIndex];
+    function updateImage() {
+      const imgElement = document.getElementById('carouselImage');
+      if (imgElement && images[currentIndex]) {
+          imgElement.src = images[currentIndex];
+      }
     }
-}
 
-function nextImage() {
-    currentIndex = (currentIndex + 1) % images.length;
-    updateImage();
-}
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % images.length;
+      updateImage();
+    }
 
-function previousImage() {
-    currentIndex = (currentIndex - 1 + images.length) % images.length;  // Décrémenter l'indice, boucle à la fin
-    updateImage();
-}
+    function previousImage() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      updateImage();
+    }
 
+    document.addEventListener('DOMContentLoaded', function() {
+      updateImage();
+    });
+  </script>
 
-document.addEventListener('DOMContentLoaded', function() {
-    updateImage();
-});
-
-
-    </script>
-
-    
 </body>
 </html>
