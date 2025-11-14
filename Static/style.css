@@ -318,7 +318,7 @@ body {
 .questionnaire {
     position: fixed;
     top: 0; right: 0;
-    width: 420px;
+    width: 520px;
     height: 100vh;
     background: rgba(255, 255, 255, 0.94);
     color: #1a1a1a;
