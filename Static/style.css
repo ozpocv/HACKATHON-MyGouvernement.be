@@ -171,7 +171,7 @@ body {
 /* === PYRAMIDE CORRIGÉE – TAILLE CROISSANTE + ALIGNEMENT PARFAIT === */
 .start-sectors-panel .sector-btn {
     background: rgba(255, 255, 255, 0.95);
-    border: 3.5px solid #43a047;
+    border: 3.5px solid #295b85;
     color: #1a1a1a;
     border-radius: 40px;
     text-transform: uppercase;
@@ -218,7 +218,7 @@ body {
 }
 
 .start-sectors-panel .sector-btn:hover {
-    background: #43a047;
+    background: #274c75;
     color: white;
     transform: translateY(-5px);
     box-shadow: 0 14px 32px rgba(67, 160, 71, 0.5);
